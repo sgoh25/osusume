@@ -1,7 +1,7 @@
-import './styles/Home.css'
 import { useState } from 'react'
-
-import Layout from './Layout.jsx'
+import { useNavigate } from 'react-router-dom';
+import '../styles/Home.css'
+import Layout from '../components/Layout.jsx'
 
 export default function Home() {
   let content = (
@@ -18,9 +18,11 @@ export default function Home() {
   )
 
   let [user, setUser] = useState(null)
+  const navigate = useNavigate();
 
   function handleLogin() {
-    setUser(0)
+    // setUser(0)
+    navigate('/login', { replace: true });
   }
 
   function handleLogout() {
@@ -32,7 +34,7 @@ export default function Home() {
       {user == null &&
         <div className="button_wrapper">
           <button className="button" onClick={handleLogin}>Log In</button>
-          <button className="button">Register</button>
+          <button className="button" onClick={() => navigate('/register', { replace: true })}>Register</button>
         </div>
       }
       {user != null &&

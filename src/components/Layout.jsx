@@ -1,4 +1,4 @@
-import './styles/Home.css'
+import '../styles/Home.css'
 
 export default function Layout({ buttons, body }) {
   return (
