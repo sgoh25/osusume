@@ -24,6 +24,12 @@
     margin: 2% 10%;
 }
 
+.error {
+    margin: 2% 10%;
+    font-size: 15px;
+    color: crimson;
+}
+
 input[type=text],
 input[type=password] {
     width: 75%;

@@ -3,6 +3,7 @@ import os
 from flask import Flask
 
 from . import db
+from . import auth
 
 
 def create_app():
@@ -20,5 +21,8 @@ def create_app():
 
     # Initialize database clean up handler
     db.init_app(app)
+
+    # Initialize authentication pages
+    app.register_blueprint(auth.bp)
 
     return app
