@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css'
 import Layout from '../components/Layout.jsx'
 
-export default function Home() {
+export default function Home({ token, saveToken, removeToken }) {
   let content = (
     <>
       <div className="post">
@@ -17,27 +17,28 @@ export default function Home() {
     </>
   )
 
-  let [user, setUser] = useState(null)
   const navigate = useNavigate();
 
-  function handleLogin() {
-    // setUser(0)
-    navigate('/login', { replace: true });
-  }
-
   function handleLogout() {
-    setUser(null)
+    axios.post("/auth/logout").then((response) => {
+      console.log(response.data.msg)
+      removeToken()
+    }).catch(function (error) {
+      if (error.response) {
+        console.log(error.response.data.msg)
+      }
+    })
   }
 
   let buttons = (
     <>
-      {user == null &&
+      {token == null &&
         <div className="button_wrapper">
-          <button className="button" onClick={handleLogin}>Log In</button>
+          <button className="button" onClick={() => navigate('/login', { replace: true })}>Log In</button>
           <button className="button" onClick={() => navigate('/register', { replace: true })}>Register</button>
         </div>
       }
-      {user != null &&
+      {token != null &&
         <div className="button_wrapper">
           <button className="button" onClick={handleLogout}>Log Out</button>
         </div>

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/Login.css'
 import Layout from './Layout.jsx'
 
-export default function LoginLayout({ isRegister }) {
+export default function LoginLayout({ isRegister, saveToken }) {
     const navigate = useNavigate();
     let [error, setError] = useState(null)
     const [loginForm, setloginForm] = useState({
@@ -20,14 +20,26 @@ export default function LoginLayout({ isRegister }) {
         )
     }
 
-    function handleRegister() {
-        axios.post("/auth/register", {
+    function handleSubmit(isRegister) {
+        let url, redirect;
+        if (isRegister) {
+            url = "/auth/register";
+            redirect = "/login";
+        }
+        else {
+            url = "/auth/login";
+            redirect = "/";
+        }
+        axios.post(url, {
             username: loginForm.username,
             password: loginForm.password
         }).then((response) => {
             console.log(response.data.msg)
             setError(null)
-            navigate('/login', { replace: true })
+            if (!isRegister) {
+                saveToken(response.data.access_token)
+            }
+            navigate(redirect, { replace: true })
         }).catch(function (error) {
             if (error.response) {
                 console.log(error.response.data.msg)
@@ -53,8 +65,8 @@ export default function LoginLayout({ isRegister }) {
                     <input type="password" onChange={handleChange} placeholder="Password" name="password" text={loginForm.password} value={loginForm.password}></input>
                     {error != null && <div className="error">{error}</div>}
                     <div className="login_button">
-                        {isRegister && <button className="button" type="button" onClick={handleRegister}>Register</button>}
-                        {!isRegister && <button className="button" type="button">Log In</button>}
+                        {isRegister && <button className="button" type="button" onClick={() => handleSubmit(isRegister={isRegister})}>Register</button>}
+                        {!isRegister && <button className="button" type="button" onClick={() => handleSubmit(isRegister={isRegister})}>Log In</button>}
                         <button className="button" onClick={() => navigate('/', { replace: true })}>Cancel</button>
                     </div>
                 </form>

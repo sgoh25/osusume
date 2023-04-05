@@ -1,17 +1,25 @@
 import * as React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
+import useToken from './useToken';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
 export default function App() {
+  const { token, removeToken, saveToken } = useToken();
+
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
+        <Route path="/" element={<Home token={token} saveToken={saveToken} removeToken={removeToken}/>} />
+        {!token && token !== "" && token !== undefined ?
+          <>
+            <Route path="login" element={<Login saveToken={saveToken} />} />
+            <Route path="register" element={<Register saveToken={saveToken} />} /> 
+          </> :
+          <Route path="/" element={<Home token={token} saveToken={saveToken} removeToken={removeToken}/>} />
+        }
       </Routes>
     </div>
   );
