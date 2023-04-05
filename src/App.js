@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import NotFound from './pages/NotFound';
 
 export default function App() {
   const { token, removeToken, saveToken } = useToken();
@@ -21,6 +22,7 @@ export default function App() {
           </> :
           <Route path="profile" element={<Profile token={token} saveToken={saveToken} removeToken={removeToken}/>} />
         }
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );
