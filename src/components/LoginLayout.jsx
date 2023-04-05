@@ -24,8 +24,7 @@ export default function LoginLayout({ isRegister }) {
         axios.post("/auth/register", {
             username: loginForm.username,
             password: loginForm.password
-        })
-        .then((response) => {
+        }).then((response) => {
             console.log(response.data.msg)
             setError(null)
             navigate('/login', { replace: true })
