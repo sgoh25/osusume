@@ -6,15 +6,21 @@ from flask_jwt_extended import (
     create_access_token,
     get_jwt,
     get_jwt_identity,
-    unset_jwt_cookies,
     jwt_required,
-    JWTManager,
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from api.db import get_db
 
 bp = Blueprint("post", __name__, url_prefix="/post")
+
+
+def get_user_id(username):
+    db = get_db()
+    user_info = db.execute(
+        "SELECT * FROM user WHERE username = ?", (username,)
+    ).fetchone()
+    return user_info["id"]
 
 
 @bp.after_request
@@ -34,14 +40,13 @@ def refresh_expiring_token(response):
         return response
 
 
-@bp.route("/profile")
+@bp.route("/profile", methods=["GET"])
 @jwt_required()
 def get_profile():
     db = get_db()
-    posts = db.execute(
-        "SELECT * FROM post WHERE username = ?", (get_jwt_identity(),)
-    ).fetchall()
+    user_id = get_user_id(get_jwt_identity())
+    posts = db.execute("SELECT * FROM post WHERE author_id = ?", (user_id,)).fetchall()
 
-    if posts is None:
+    if not posts:
         return {}
     return {"posts": posts}

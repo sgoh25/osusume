@@ -6,8 +6,10 @@ import SinglePost from '../components/SinglePost.jsx';
 
 export default function Profile({ token, saveToken, removeToken }) {
     let posts = null;
-    axios.get("/post/profile", {
-        Authorization: "Bearer " + token,
+    axios({
+        method: "GET",
+        url: "/post/profile",
+        headers: { Authorization: "Bearer " + token }
     }).then((response) => {
         console.log(response.data.msg)
         response.data.access_token && saveToken(response.data.access_token)
