@@ -40,6 +40,7 @@ export default function Home({ token, saveToken, removeToken }) {
       }
       {token != null &&
         <div className="button_wrapper">
+          <button className="button" onClick={() => navigate('/profile', { replace: true })}>Profile</button>
           <button className="button" onClick={handleLogout}>Log Out</button>
         </div>
       }
@@ -57,5 +58,5 @@ export default function Home({ token, saveToken, removeToken }) {
     </>
   )
 
-  return <Layout buttons={buttons} body={body} />
+  return <Layout top_buttons={buttons} body={body} />
 }

@@ -22,5 +22,5 @@ export default function PostLayout({ isCreate }) {
         </>
     )
 
-    return <Layout buttons={<></>} body={body} />
+    return <Layout top_buttons={<></>} body={body} />
 }

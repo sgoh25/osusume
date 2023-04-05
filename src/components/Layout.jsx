@@ -1,11 +1,11 @@
 import '../styles/Home.css'
 
-export default function Layout({ buttons, body }) {
+export default function Layout({ top_buttons, body }) {
   return (
     <>
       <div className="top">
         <div className="logo">The Bready Bakery</div>
-        {buttons}
+        {top_buttons}
       </div>
 
       <div className="header"></div>

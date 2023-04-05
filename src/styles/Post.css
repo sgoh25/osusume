@@ -1,0 +1,16 @@
+.top_profile {
+    padding: 25px;
+    margin-left: 1%;
+    margin-right: 1%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.profile_title {
+    font-weight: bold;
+    font-size: 30px;
+}
+
+.create_button {
+    display: inline-block;
+}
