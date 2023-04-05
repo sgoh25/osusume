@@ -62,3 +62,38 @@ def get_profile():
     if not posts:
         return {}
     return {"posts": posts}
+
+
+@bp.route("/create", methods=["POST"])
+@jwt_required()
+def create_post():
+    title = request.json.get("title", None)
+    description = request.json.get("description", None)
+    parameters = request.json.get("parameters", None)
+    db = get_db()
+    error = None
+
+    if not title:
+        error = "Title is required."
+
+    if error is None:
+        try:
+            author = get_jwt_identity()
+            author_id = get_user_id(author)
+            db.execute(
+                "INSERT INTO post (author_id, author, created, title, description, parameters) VALUES (?, ?, ?, ?, ?, ?)",
+                (
+                    author_id,
+                    author,
+                    datetime.now().replace(second=0, microsecond=0),
+                    title,
+                    description,
+                    parameters,
+                ),
+            )
+            db.commit()
+        except Exception as e:
+            error = e
+        else:
+            return {"msg": "New post created"}
+    return {"msg": error}

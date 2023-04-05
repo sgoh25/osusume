@@ -14,3 +14,21 @@
 .create_button {
     display: inline-block;
 }
+
+.post_wrapper {
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(47, 48, 48);
+    display: block;
+    margin: 5% auto;
+    padding: 15px 5px;
+    width: 60%;
+}
+
+textarea {
+    font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    width: 75%;
+    height: 80px;
+    margin: auto 10%;
+    padding: 5px;
+}
