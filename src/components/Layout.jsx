@@ -4,7 +4,7 @@ export default function Layout({ top_buttons, body }) {
   return (
     <>
       <div className="top">
-        <div className="logo">The Bready Bakery</div>
+        <div className="logo">Osusume</div>
         {top_buttons}
       </div>
 
