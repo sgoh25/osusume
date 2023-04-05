@@ -34,11 +34,10 @@ export default function LoginLayout({ isRegister, saveToken }) {
             username: loginForm.username,
             password: loginForm.password
         }).then((response) => {
-            console.log(response.data.msg)
+            let rsp = response.data
+            console.log(rsp.msg)
             setError(null)
-            if (!isRegister) {
-                saveToken(response.data.access_token)
-            }
+            !isRegister && saveToken(rsp.access_token, rsp.access_expiration)
             navigate(redirect, { replace: true })
         }).catch(function (error) {
             if (error.response) {

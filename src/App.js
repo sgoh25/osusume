@@ -14,13 +14,16 @@ export default function App() {
   return (
     <div className="App">
       <Routes>
-        <Route exact path="/" element={<Home token={token} saveToken={saveToken} removeToken={removeToken}/>} />
         {!token && token !== "" && token !== undefined ?
           <>
+            <Route exact path="/" element={<Home token={null} saveToken={saveToken} removeToken={removeToken} />} />
             <Route path="login" element={<Login saveToken={saveToken} />} />
-            <Route path="register" element={<Register saveToken={saveToken} />} /> 
+            <Route path="register" element={<Register saveToken={saveToken} />} />
           </> :
-          <Route path="profile" element={<Profile token={token} saveToken={saveToken} removeToken={removeToken}/>} />
+          <>
+            <Route exact path="/" element={<Home token={token} saveToken={saveToken} removeToken={removeToken} />} />
+            <Route path="profile" element={<Profile token={token} saveToken={saveToken} removeToken={removeToken} />} />
+          </>
         }
         <Route path="*" element={<NotFound />} />
       </Routes>

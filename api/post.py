@@ -1,15 +1,17 @@
 import json
+import sys
+import time
 
 from datetime import datetime, timedelta, timezone
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask_jwt_extended import (
     create_access_token,
     get_jwt,
     get_jwt_identity,
     jwt_required,
 )
-from werkzeug.security import check_password_hash, generate_password_hash
 
+from api.auth import get_expiration
 from api.db import get_db
 
 bp = Blueprint("post", __name__, url_prefix="/post")
@@ -34,6 +36,7 @@ def refresh_expiring_token(response):
             data = response.get_json()
             if isinstance(data, dict):
                 data["access_token"] = access_token
+                data["access_expiration"] = get_expiration()
                 response.data = json.dumps(data)
         return response
     except (RuntimeError, KeyError):

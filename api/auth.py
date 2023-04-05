@@ -1,3 +1,7 @@
+import sys
+import time
+
+from datetime import datetime, timedelta
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, unset_jwt_cookies
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -5,6 +9,11 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from api.db import get_db
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
+
+
+def get_expiration():
+    now = datetime.now() + timedelta(minutes=10)
+    return int(time.mktime(now.timetuple())) * 1000
 
 
 @bp.route("/register", methods=["POST"])
@@ -49,7 +58,11 @@ def login():
 
     if error is None:
         access_token = create_access_token(identity=username)
-        return {"access_token": access_token, "msg": f"Login successful"}
+        return {
+            "access_token": access_token,
+            "access_expiration": get_expiration(),
+            "msg": f"Login successful",
+        }
 
     return {"msg": error}, 401
 

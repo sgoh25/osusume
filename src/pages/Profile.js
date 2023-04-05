@@ -11,9 +11,10 @@ export default function Profile({ token, saveToken, removeToken }) {
         url: "/post/profile",
         headers: { Authorization: "Bearer " + token }
     }).then((response) => {
-        console.log(response.data.msg)
-        response.data.access_token && saveToken(response.data.access_token)
-        posts = response.data.posts
+        let rsp = response.data
+        console.log(rsp.msg)
+        rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+        posts = rsp.posts
     }).catch(function (error) {
         if (error.response) {
             console.log(error.response.data.msg)
