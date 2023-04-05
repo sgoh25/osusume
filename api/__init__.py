@@ -1,10 +1,12 @@
 import os
 
+from datetime import timedelta
 from flask import Flask
 from flask_jwt_extended import JWTManager
 
 from . import db
 from . import auth
+from . import post
 
 
 def create_app():
@@ -14,6 +16,7 @@ def create_app():
         DATABASE=os.path.join(api.instance_path, "database.sqlite"),
     )
     api.config.from_pyfile("config.py", silent=True)
+    api.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=10)
     jwt = JWTManager(api)
 
     try:

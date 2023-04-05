@@ -2,18 +2,25 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Post.css'
 import Layout from '../components/Layout.jsx'
+import SinglePost from '../components/SinglePost.jsx';
 
-export default function Home({ token, saveToken, removeToken }) {
+export default function Profile({ token, saveToken, removeToken }) {
+    let posts = null;
+    axios.get("/post/profile", {
+        Authorization: "Bearer " + token,
+    }).then((response) => {
+        console.log(response.data.msg)
+        response.data.access_token && saveToken(response.data.access_token)
+        posts = response.data.posts
+    }).catch(function (error) {
+        if (error.response) {
+            console.log(error.response.data.msg)
+        }
+    })
+
     let content = (
         <>
-            <div className="post">
-                <h2>Post #1</h2>
-                <p>details</p>
-            </div>
-            <div className="post">
-                <h2>Post #2</h2>
-                <p>details</p>
-            </div>
+            {posts != null && posts.map((element) => <SinglePost post={element} key={element} />)}
         </>
     )
 
