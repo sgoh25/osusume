@@ -8,23 +8,26 @@ from . import auth
 
 
 def create_app():
-    app = Flask(__name__)
-    app.config.from_mapping(
+    api = Flask(__name__)
+    api.config.from_mapping(
         JWT_SECRET_KEY="dev",  # TBD!!
-        DATABASE=os.path.join(app.instance_path, "database.sqlite"),
+        DATABASE=os.path.join(api.instance_path, "database.sqlite"),
     )
-    app.config.from_pyfile("config.py", silent=True)
-    jwt = JWTManager(app)
+    api.config.from_pyfile("config.py", silent=True)
+    jwt = JWTManager(api)
 
     try:
-        os.makedirs(app.instance_path)
+        os.makedirs(api.instance_path)
     except OSError:
         pass
 
     # Initialize database clean up handler
-    db.init_app(app)
+    db.init_api(api)
 
     # Initialize authentication pages
-    app.register_blueprint(auth.bp)
+    api.register_blueprint(auth.bp)
 
-    return app
+    # Initialize post pages
+    api.register_blueprint(post.bp)
+
+    return api
