@@ -7,14 +7,14 @@ import Layout from './Layout.jsx'
 export default function LoginLayout({ isRegister, saveToken }) {
     const navigate = useNavigate();
     let [error, setError] = useState(null)
-    const [loginForm, setloginForm] = useState({
+    const [loginForm, setLoginForm] = useState({
         username: "",
         password: ""
     })
 
     function handleChange(event) {
         const { value, name } = event.target
-        setloginForm(prevNote => ({
+        setLoginForm(prevNote => ({
             ...prevNote, [name]: value
         })
         )
@@ -47,7 +47,7 @@ export default function LoginLayout({ isRegister, saveToken }) {
             }
         })
 
-        setloginForm(({
+        setLoginForm(({
             username: "",
             password: ""
         }))

@@ -41,6 +41,7 @@ export default function Profile({ token, saveToken, removeToken }) {
     let buttons = (
         <>
             <div className="button_wrapper">
+                <button className="button" onClick={() => navigate('/', { replace: true })}>Home</button>
                 <button className="button" onClick={handleLogout}>Log Out</button>
             </div>
         </>
@@ -54,7 +55,7 @@ export default function Profile({ token, saveToken, removeToken }) {
                     <button className="button" onClick={() => navigate('/profile/create', { replace: true })}>Create Post</button>
                 </div>
             </div>
-            
+
             <div className="content">
                 {content}
             </div>
