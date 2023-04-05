@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Post.css'
-import Layout from '../components/Layout.jsx'
+import '../styles/Post.css';
+import Layout from '../components/Layout.jsx';
 import SinglePost from '../components/SinglePost.jsx';
 
 export default function Profile({ token, saveToken, removeToken }) {
+    const navigate = useNavigate();
     let posts = null;
     axios({
         method: "GET",
@@ -18,6 +19,10 @@ export default function Profile({ token, saveToken, removeToken }) {
     }).catch(function (error) {
         if (error.response) {
             console.log(error.response.data.msg)
+            if (error.response.status === 401) {
+                removeToken()
+                navigate('/timeOut', { replace: true })
+            }
         }
     })
 
@@ -26,8 +31,6 @@ export default function Profile({ token, saveToken, removeToken }) {
             {posts != null && posts.map((element) => <SinglePost post={element} key={element} />)}
         </>
     )
-
-    const navigate = useNavigate();
 
     function handleLogout() {
         axios.post("/auth/logout").then((response) => {

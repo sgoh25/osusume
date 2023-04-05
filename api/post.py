@@ -1,6 +1,5 @@
 import json
 import sys
-import time
 
 from datetime import datetime, timedelta, timezone
 from flask import Blueprint, request
@@ -43,13 +42,23 @@ def refresh_expiring_token(response):
         return response
 
 
+@bp.route("/all", methods=["GET"])
+def get_all():
+    db = get_db()
+    data = db.execute("SELECT * FROM post").fetchmany(10)
+    posts = json.dumps([tuple(row) for row in data], default=str)
+    if not posts:
+        return {}
+    return {"posts": posts}
+
+
 @bp.route("/profile", methods=["GET"])
 @jwt_required()
 def get_profile():
     db = get_db()
     user_id = get_user_id(get_jwt_identity())
-    posts = db.execute("SELECT * FROM post WHERE author_id = ?", (user_id,)).fetchall()
-
+    data = db.execute("SELECT * FROM post WHERE author_id = ?", (user_id,)).fetchall()
+    posts = json.dumps([tuple(row) for row in data], default=str)
     if not posts:
         return {}
     return {"posts": posts}
