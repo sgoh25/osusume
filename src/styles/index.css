@@ -1,11 +1,11 @@
 body {
-  margin: 0;
-  font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: 'Courier New', source-code-pro, Menlo, Monaco, Consolas,
-    monospace;
+    font-family: 'Courier New', source-code-pro, Menlo, Monaco, Consolas,
+        monospace;
 }
