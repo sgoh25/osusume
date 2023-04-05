@@ -65,8 +65,8 @@ export default function LoginLayout({ isRegister, saveToken }) {
                     <input type="password" onChange={handleChange} placeholder="Password" name="password" text={loginForm.password} value={loginForm.password}></input>
                     {error != null && <div className="error">{error}</div>}
                     <div className="login_button">
-                        {isRegister && <button className="button" type="button" onClick={() => handleSubmit(isRegister={isRegister})}>Register</button>}
-                        {!isRegister && <button className="button" type="button" onClick={() => handleSubmit(isRegister={isRegister})}>Log In</button>}
+                        {isRegister && <button className="button" type="button" onClick={() => handleSubmit(isRegister)}>Register</button>}
+                        {!isRegister && <button className="button" type="button" onClick={() => handleSubmit(isRegister)}>Log In</button>}
                         <button className="button" onClick={() => navigate('/', { replace: true })}>Cancel</button>
                     </div>
                 </form>
