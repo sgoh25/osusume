@@ -41,17 +41,17 @@ export default function SinglePost({ postInfo, tokenInfo, isProfile }) {
 
     return (
         <>
-            <div className="post">
-                <div className="title_wrapper">
+            <div className="preview_wrapper">
+                <div className="preview" onClick={() => navigate('/post', { replace: true, state: { post_id: post.id } })}>
                     <h2>{post.title}</h2>
-                    {isProfile &&
-                        <div className="edit_buttons">
-                            <Button className="button" onClick={() => navigate('/profile/update', { replace: true, state: { post_id: post.id } })}>Update</Button>
-                            <Button className="button" onClick={showModal}>Delete</Button>
-                        </div>
-                    }
+                    <p>By: {post.author} - {post.created.slice(0, -7)}</p>
                 </div>
-                <p>By: {post.author} - {post.created.slice(0, -7)}</p>
+                {isProfile &&
+                    <div className="edit_buttons">
+                        <Button className="button" onClick={() => navigate('/profile/update', { replace: true, state: { post_id: post.id } })}>Update</Button>
+                        <Button className="button" onClick={showModal} danger>Delete</Button>
+                    </div>
+                }
                 <Modal title="Delete Confirmation" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                     <p>Are you sure you want to delete this post?</p>
                 </Modal>
