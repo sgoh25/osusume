@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Button } from 'antd';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Post.css';
@@ -39,7 +40,7 @@ export default function Profile({ token, saveToken, removeToken }) {
     let content = (
         <>
             {postsLoading && <div className="loading">Loading...</div>}
-            {posts != null && posts.map((element) => <SinglePost post={element} key={element} />)}
+            {posts != null && posts.map((element) => <SinglePost post={element} isProfile={true} key={element} />)}
         </>
     )
 
@@ -58,8 +59,8 @@ export default function Profile({ token, saveToken, removeToken }) {
     let buttons = (
         <>
             <div className="button_wrapper">
-                <button className="button" onClick={() => navigate('/', { replace: true })}>Home</button>
-                <button className="button" onClick={handleLogout}>Log Out</button>
+                <Button className="button" onClick={() => navigate('/', { replace: true })}>Home</Button>
+                <Button className="button" onClick={handleLogout}>Log Out</Button>
             </div>
         </>
     )
@@ -69,7 +70,7 @@ export default function Profile({ token, saveToken, removeToken }) {
             <div className="top_profile">
                 <div className="profile_title">Your Posts</div>
                 <div className="create_button">
-                    <button className="button" onClick={() => navigate('/profile/create', { replace: true })}>Create Post</button>
+                    <Button className="button" onClick={() => navigate('/profile/create', { replace: true })}>Create Post</Button>
                 </div>
             </div>
 

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Button } from 'antd';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
@@ -39,7 +40,7 @@ export default function Home({ token, saveToken, removeToken }) {
     let content = (
         <>
             {postsLoading && <div className="loading">Loading...</div>}
-            {posts != null && posts.map((element) => <SinglePost post={element} key={element} />)}
+            {posts != null && posts.map((element) => <SinglePost post={element} isProfile={false} key={element} />)}
         </>
     )
 
@@ -58,14 +59,14 @@ export default function Home({ token, saveToken, removeToken }) {
         <>
             {token == null &&
                 <div className="button_wrapper">
-                    <button className="button" onClick={() => navigate('/login', { replace: true })}>Log In</button>
-                    <button className="button" onClick={() => navigate('/register', { replace: true })}>Register</button>
+                    <Button className="button" onClick={() => navigate('/login', { replace: true })}>Log In</Button>
+                    <Button className="button" onClick={() => navigate('/register', { replace: true })}>Register</Button>
                 </div>
             }
             {token != null &&
                 <div className="button_wrapper">
-                    <button className="button" onClick={() => navigate('/profile', { replace: true })}>Profile</button>
-                    <button className="button" onClick={handleLogout}>Log Out</button>
+                    <Button className="button" onClick={() => navigate('/profile', { replace: true })}>Profile</Button>
+                    <Button className="button" onClick={handleLogout}>Log Out</Button>
                 </div>
             }
         </>

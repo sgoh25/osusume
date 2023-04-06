@@ -14,16 +14,7 @@
 
 .create_button {
     display: inline-block;
-}
-
-.post_wrapper {
-    border-style: solid;
-    border-width: 1px;
-    border-color: rgb(47, 48, 48);
-    display: block;
-    margin: 5% auto;
-    padding: 15px 5px;
-    width: 60%;
+    margin-top: 1%;
 }
 
 .loading {
@@ -31,6 +22,16 @@
     text-align: center;
     padding: 30px;
     margin-top: 5%;
+}
+
+.title_wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.update_buttons {
+    padding-top: 10px;
+    display: inline-block;
 }
 
 textarea {
