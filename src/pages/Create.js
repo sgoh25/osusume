@@ -1,5 +1,5 @@
 import EditLayout from '../components/EditLayout.jsx';
 
-export default function Create({ token, saveToken }) {
-    return <EditLayout isCreate={true} token={token} saveToken={saveToken} />
+export default function Create({ token, saveToken, removeToken }) {
+    return <EditLayout post_id={null} tokenInfo={{ token, saveToken, removeToken }} />
 }

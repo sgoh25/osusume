@@ -59,15 +59,16 @@ export default function Home({ token, saveToken, removeToken }) {
         })
     }
 
+    let invalidToken = (!token && token !== "" && token !== undefined)
     let buttons = (
         <>
-            {token == null &&
+            {invalidToken &&
                 <div className="button_wrapper">
                     <Button className="button" onClick={() => navigate('/login', { replace: true })}>Log In</Button>
                     <Button className="button" onClick={() => navigate('/register', { replace: true })}>Register</Button>
                 </div>
             }
-            {token != null &&
+            {!invalidToken &&
                 <div className="button_wrapper">
                     <Button className="button" onClick={() => navigate('/profile', { replace: true })}>Profile</Button>
                     <Button className="button" onClick={handleLogout}>Log Out</Button>

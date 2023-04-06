@@ -12,20 +12,20 @@ import TimeOut from './pages/TimeOut';
 
 export default function App() {
     const { token, removeToken, saveToken } = useToken();
+    let tokenInfo = {token: token, saveToken: saveToken, removeToken: removeToken}
 
     return (
         <div className="App">
             <Routes>
+                <Route exact path="/" element={<Home {...tokenInfo} />} />
                 {!token && token !== "" && token !== undefined ?
                     <>
-                        <Route exact path="/" element={<Home token={null} saveToken={saveToken} removeToken={removeToken} />} />
                         <Route path="login" element={<Login saveToken={saveToken} />} />
                         <Route path="register" element={<Register saveToken={saveToken} />} />
                     </> :
                     <>
-                        <Route exact path="/" element={<Home token={token} saveToken={saveToken} removeToken={removeToken} />} />
-                        <Route path="profile" element={<Profile token={token} saveToken={saveToken} removeToken={removeToken} />} />
-                        <Route path="profile/create" element={<Create token={token} saveToken={saveToken} />} />
+                        <Route path="profile" element={<Profile {...tokenInfo} />} />
+                        <Route path="profile/create" element={<Create {...tokenInfo} />} />
                     </>
                 }
                 <Route path="/timeout" element={<TimeOut removeToken={removeToken} />} />
