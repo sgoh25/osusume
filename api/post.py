@@ -57,7 +57,7 @@ def parse_row_data(data, columns):
 @bp.route("/all", methods=["GET"])
 def get_all():
     db = get_db()
-    cursor = db.execute("SELECT * FROM post")
+    cursor = db.execute("SELECT * FROM post ORDER BY created DESC")
     data = cursor.fetchmany(10)
     columns = [desc[0] for desc in cursor.description]
     return parse_row_data(data, columns)
@@ -68,7 +68,9 @@ def get_all():
 def get_profile():
     db = get_db()
     user_id = get_user_id(get_jwt_identity())
-    cursor = db.execute("SELECT * FROM post WHERE author_id = ?", (user_id,))
+    cursor = db.execute(
+        "SELECT * FROM post WHERE author_id = ? ORDER BY created DESC", (user_id,)
+    )
     data = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
     return parse_row_data(data, columns)
