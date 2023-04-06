@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/Post.css';
 import Layout from './Layout.jsx';
 
-export default function PostLayout({ isCreate, token, saveToken }) {
+export default function EditLayout({ isCreate, token, saveToken }) {
     const navigate = useNavigate();
     let [error, setError] = useState(null)
     const [postForm, setPostForm] = useState({
