@@ -1,3 +1,4 @@
+import { Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
 import Layout from '../components/Layout.jsx';
@@ -9,7 +10,7 @@ export default function NotFound() {
     let buttons = (
         <>
             <div className="button_wrapper">
-                <button className="button" onClick={() => navigate('/', { replace: true })}>Home</button>
+                <Button className="button" onClick={() => navigate('/', { replace: true })}>Home</Button>
             </div>
         </>
     )

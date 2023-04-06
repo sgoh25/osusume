@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
 import Layout from '../components/Layout.jsx';
@@ -21,7 +22,7 @@ export default function TimeOut({ removeToken }) {
     let buttons = (
         <>
             <div className="button_wrapper">
-                <button className="button" onClick={handleLogout}>Home</button>
+                <Button className="button" onClick={handleLogout}>Home</Button>
             </div>
         </>
     )
@@ -29,7 +30,7 @@ export default function TimeOut({ removeToken }) {
     let body = (
         <>
             <div className="center">
-                <h1>You have been logged out due to inactivity.</h1>
+                <div className="timeout">You have been logged out due to inactivity.</div>
             </div>
         </>
     )

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Button } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
@@ -64,9 +65,9 @@ export default function LoginLayout({ isRegister, saveToken }) {
                     <input type="password" onChange={handleChange} placeholder="Password" name="password" text={loginForm.password} value={loginForm.password}></input>
                     {error != null && <div className="error">{error}</div>}
                     <div className="login_button">
-                        {isRegister && <button className="button" type="button" onClick={() => handleSubmit(isRegister)}>Register</button>}
-                        {!isRegister && <button className="button" type="button" onClick={() => handleSubmit(isRegister)}>Log In</button>}
-                        <button className="button" onClick={() => navigate('/', { replace: true })}>Cancel</button>
+                        {isRegister && <Button className="button" type="primary" onClick={() => handleSubmit(isRegister)}>Register</Button>}
+                        {!isRegister && <Button className="button" type="primary" onClick={() => handleSubmit(isRegister)}>Log In</Button>}
+                        <Button className="button" onClick={() => navigate('/', { replace: true })}>Cancel</Button>
                     </div>
                 </form>
             </div>
