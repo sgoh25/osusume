@@ -1,17 +1,21 @@
 .login_wrapper {
     border-style: solid;
     border-width: 1px;
-    border-color: rgb(47, 48, 48);
+    border-radius: 12px;
+    border-color: rgba(195, 191, 191, 0.684);
+    background-color: rgb(252, 252, 252);
+    box-shadow: 1.5px 2px 2px rgba(195, 191, 191, 0.684);
     display: block;
     margin: 5% auto;
-    padding: 15px 5px;
+    padding: 30px 0px;
     width: 60%;
 }
 
-.title {
+.form_title {
     margin: 2% 10%;
     font-size: 30px;
     font-weight: bold;
+    text-shadow: 0.5px 0.5px 0.5px rgba(195, 191, 191, 0.684);
 }
 
 .label {
@@ -36,4 +40,9 @@ input[type=password] {
     width: 75%;
     margin: auto 10%;
     padding: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: rgba(94, 94, 94, 0.84);
+    box-shadow: 0.5px 0.5px 0.5px rgba(195, 191, 191, 0.684);
 }

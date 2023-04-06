@@ -20,6 +20,7 @@ body {
 .logo {
     font-weight: bold;
     font-size: 35px;
+    text-shadow: 1.5px 2px 2px rgba(195, 191, 191, 0.684);
 }
 
 .button_wrapper {
@@ -29,9 +30,14 @@ body {
 .button {
     margin-right: 4px;
     margin-top: 4px;
+    box-shadow: 0.5px 1px 1px rgba(195, 191, 191, 0.684);
 }
 
 .header {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px 5px 0 0;
+    border-color: rgb(88, 145, 179);
     background-color: rgb(88, 145, 179);
     margin-top: 1%;
     margin-bottom: -1%;
@@ -49,6 +55,7 @@ body {
 .wrapper {
     border-style: solid;
     border-width: 1px;
+    border-radius: 0 0 5px 5px;
     border-color: rgb(88, 145, 179);
     margin-left: 5%;
     margin-right: 5%;
@@ -62,6 +69,7 @@ body {
 .center {
     text-align: center;
     padding: 1rem 0;
+    text-shadow: 1px 1px 1px rgba(195, 191, 191, 0.684);
 }
 
 .content {
@@ -74,7 +82,10 @@ body {
 .post {
     border-style: solid;
     border-width: 1px;
-    border-color: rgb(47, 48, 48);
+    border-radius: 12px;
+    border-color: rgba(195, 191, 191, 0.684);
+    background-color: rgb(252, 252, 252);
+    box-shadow: 1.5px 2px 2px rgba(195, 191, 191, 0.684);
     padding: 5px 30px;
     padding-bottom: 15px;
     margin-bottom: 1%;

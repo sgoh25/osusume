@@ -56,8 +56,8 @@ export default function LoginLayout({ isRegister, saveToken }) {
     let body = (
         <>
             <div className="login_wrapper">
-                {isRegister && <div className="title">Register New Account</div>}
-                {!isRegister && <div className="title">Login</div>}
+                {isRegister && <div className="form_title">Register New Account</div>}
+                {!isRegister && <div className="form_title">Login</div>}
                 <form>
                     <div className="label">Username:</div>
                     <input type="text" onChange={handleChange} placeholder="Username" name="username" text={loginForm.username} value={loginForm.username}></input>

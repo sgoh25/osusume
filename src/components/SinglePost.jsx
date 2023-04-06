@@ -45,13 +45,13 @@ export default function SinglePost({ postInfo, tokenInfo, isProfile }) {
                 <div className="title_wrapper">
                     <h2>{post.title}</h2>
                     {isProfile &&
-                        <div className="update_buttons">
+                        <div className="edit_buttons">
                             <Button className="button" onClick={() => navigate('/profile/update', { replace: true, state: { post_id: post.id } })}>Update</Button>
                             <Button className="button" onClick={showModal}>Delete</Button>
                         </div>
                     }
                 </div>
-                <p>By: {post.author} - {post.created}</p>
+                <p>By: {post.author} - {post.created.slice(0, -7)}</p>
                 <Modal title="Delete Confirmation" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                     <p>Are you sure you want to delete this post?</p>
                 </Modal>

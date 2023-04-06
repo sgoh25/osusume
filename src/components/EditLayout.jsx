@@ -86,9 +86,9 @@ export default function EditLayout({ post_id, tokenInfo }) {
 
     let body = (
         <>
-            <div className="post_wrapper">
-                {isCreate && <div className="title">Create New Post</div>}
-                {!isCreate && <div className="title">Update Post</div>}
+            <div className="edit_wrapper">
+                {isCreate && <div className="form_title">Create New Post</div>}
+                {!isCreate && <div className="form_title">Update Post</div>}
                 <form>
                     <div className="label">Title:</div>
                     <input type="text" onChange={handleChange} placeholder="Title" name="title" text={postForm.title} value={postForm.title}></input>
