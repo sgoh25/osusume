@@ -1,4 +1,4 @@
-import '../styles/Post.css'
+import '../styles/Post.css';
 
 export default function SinglePost(post) {
     return (

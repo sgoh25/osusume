@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { useState } from 'react'
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Post.css'
-import Layout from './Layout.jsx'
+import '../styles/Post.css';
+import Layout from './Layout.jsx';
 
 export default function PostLayout({ isCreate, token, saveToken }) {
     const navigate = useNavigate();

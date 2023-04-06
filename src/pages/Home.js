@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Home.css'
+import '../styles/Home.css';
 import Layout from '../components/Layout.jsx';
 import SinglePost from '../components/SinglePost.jsx';
 

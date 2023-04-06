@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { useState } from 'react'
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Login.css'
-import Layout from './Layout.jsx'
+import '../styles/Login.css';
+import Layout from './Layout.jsx';
 
 export default function LoginLayout({ isRegister, saveToken }) {
     const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Home.css'
-import Layout from '../components/Layout.jsx'
+import '../styles/Home.css';
+import Layout from '../components/Layout.jsx';
 
 export default function TimeOut({ removeToken }) {
     const navigate = useNavigate();

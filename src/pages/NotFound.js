@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import '../styles/Home.css'
-import Layout from '../components/Layout.jsx'
-import munchlax from '../styles/munchlax.png'
+import '../styles/Home.css';
+import Layout from '../components/Layout.jsx';
+import munchlax from '../styles/munchlax.png';
 
 export default function NotFound() {
     const navigate = useNavigate();
