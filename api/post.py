@@ -81,7 +81,7 @@ def get_profile():
 def create_post():
     title = request.json.get("title", None)
     description = request.json.get("description", None)
-    parameters = request.json.get("parameters", None)
+    tag = request.json.get("tag", None)
     db = get_db()
     error = None
 
@@ -93,14 +93,14 @@ def create_post():
             author = get_jwt_identity()
             author_id = get_user_id(author)
             db.execute(
-                "INSERT INTO post (author_id, author, created, title, description, parameters) VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO post (author_id, author, created, title, description, tag) VALUES (?, ?, ?, ?, ?, ?)",
                 (
                     author_id,
                     author,
                     datetime.now(),
                     title,
                     description,
-                    parameters,
+                    tag,
                 ),
             )
             db.commit()

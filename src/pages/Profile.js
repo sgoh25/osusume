@@ -40,7 +40,7 @@ export default function Profile({ token, saveToken, removeToken }) {
     let content = (
         <>
             {postsLoading && <div className="loading">Loading...</div>}
-            {posts != null && posts.map((element) => <SinglePost post={element} isProfile={true} key={element} />)}
+            {posts != null && posts.map((element, idx) => <SinglePost post={element} isProfile={true} key={`${element}${idx}`} />)}
         </>
     )
 

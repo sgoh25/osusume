@@ -11,7 +11,7 @@ export default function PostLayout({ isCreate, token, saveToken }) {
     const [postForm, setPostForm] = useState({
         title: "",
         description: "",
-        parameters: "{}"
+        tag: ""
     })
 
     function handleChange(event) {
@@ -36,7 +36,7 @@ export default function PostLayout({ isCreate, token, saveToken }) {
             data: {
                 title: postForm.title,
                 description: postForm.description,
-                parameters: postForm.parameters
+                tag: postForm.tag
             },
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
@@ -55,7 +55,7 @@ export default function PostLayout({ isCreate, token, saveToken }) {
         setPostForm(({
             title: "",
             description: "",
-            parameters: "{}"
+            tag: ""
         }))
     }
 
@@ -71,7 +71,7 @@ export default function PostLayout({ isCreate, token, saveToken }) {
                     <textarea onChange={handleChange} placeholder="Description" name="description" text={postForm.description} value={postForm.description}></textarea>
                     {error != null && <div className="error">{error}</div>}
                     <div className="login_button">
-                        <Button className="button" type="button" onClick={() => handleSubmit(isCreate)}>Submit</Button>
+                        <Button className="button" type="primary" onClick={() => handleSubmit(isCreate)}>Submit</Button>
                         <Button className="button" onClick={() => navigate('/profile', { replace: true })}>Cancel</Button>
                     </div>
                 </form>
