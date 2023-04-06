@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Post.css';
 import Layout from '../components/Layout.jsx';
@@ -6,28 +7,38 @@ import SinglePost from '../components/SinglePost.jsx';
 
 export default function Profile({ token, saveToken, removeToken }) {
     const navigate = useNavigate();
-    let posts = null;
-    axios({
-        method: "GET",
-        url: "/post/profile",
-        headers: { Authorization: "Bearer " + token }
-    }).then((response) => {
-        let rsp = response.data
-        console.log(rsp.msg)
-        rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
-        posts = rsp.posts
-    }).catch(function (error) {
-        if (error.response) {
-            console.log(error.response.data.msg)
-            if (error.response.status === 401) {
-                removeToken()
-                navigate('/timeOut', { replace: true })
+    const [posts, setPosts] = useState([]);
+    const [postsLoading, setPostsLoading] = useState(false);
+
+    useEffect(() => {
+        setPostsLoading(true);
+        axios({
+            method: "GET",
+            url: "/post/profile",
+            headers: { Authorization: "Bearer " + token }
+        }).then((response) => {
+            let rsp = response.data;
+            console.log(rsp.msg)
+            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+            if (rsp.posts) {
+                setPosts(rsp.posts);
             }
-        }
-    })
+        }).catch(function (error) {
+            if (error.response) {
+                console.log(error.response.data.msg)
+                if (error.response.status === 401) {
+                    removeToken()
+                    navigate('/timeOut', { replace: true })
+                }
+            }
+        }).finally(function () {
+            setPostsLoading(false);
+        })
+    }, []);
 
     let content = (
         <>
+            {postsLoading && <div className="loading">Loading...</div>}
             {posts != null && posts.map((element) => <SinglePost post={element} key={element} />)}
         </>
     )

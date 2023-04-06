@@ -42,14 +42,25 @@ def refresh_expiring_token(response):
         return response
 
 
-@bp.route("/all", methods=["GET"])
-def get_all():
-    db = get_db()
-    data = db.execute("SELECT * FROM post").fetchmany(10)
-    posts = json.dumps([tuple(row) for row in data], default=str)
+def parse_row_data(data, columns):
+    posts = []
+    for row in data:
+        row_dict = {}
+        for col, val in zip(columns, row):
+            row_dict[col] = val
+        posts.append(row_dict)
     if not posts:
         return {}
     return {"posts": posts}
+
+
+@bp.route("/all", methods=["GET"])
+def get_all():
+    db = get_db()
+    cursor = db.execute("SELECT * FROM post")
+    data = cursor.fetchmany(10)
+    columns = [desc[0] for desc in cursor.description]
+    return parse_row_data(data, columns)
 
 
 @bp.route("/profile", methods=["GET"])
@@ -57,11 +68,10 @@ def get_all():
 def get_profile():
     db = get_db()
     user_id = get_user_id(get_jwt_identity())
-    data = db.execute("SELECT * FROM post WHERE author_id = ?", (user_id,)).fetchall()
-    posts = json.dumps([tuple(row) for row in data], default=str)
-    if not posts:
-        return {}
-    return {"posts": posts}
+    cursor = db.execute("SELECT * FROM post WHERE author_id = ?", (user_id,))
+    data = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    return parse_row_data(data, columns)
 
 
 @bp.route("/create", methods=["POST"])
@@ -85,7 +95,7 @@ def create_post():
                 (
                     author_id,
                     author,
-                    datetime.now().replace(second=0, microsecond=0),
+                    datetime.now(),
                     title,
                     description,
                     parameters,
