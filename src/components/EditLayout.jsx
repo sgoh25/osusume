@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Button } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Post.css';
 import Layout from './Layout.jsx';
@@ -16,6 +16,29 @@ export default function EditLayout({ post_id, tokenInfo }) {
         tag: ""
     })
 
+    useEffect(() => {
+        if (!isCreate) {
+            axios({
+                method: "GET",
+                url: `/post/${post_id}`,
+                headers: { Authorization: "Bearer " + token }
+            }).then((response) => {
+                let rsp = response.data;
+                console.log(rsp.msg)
+                rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+                setPostForm({ title: rsp.title, description: rsp.description, tag: rsp.tag })
+            }).catch(function (error) {
+                if (error.response) {
+                    console.log(error.response.data.msg)
+                    if (error.response.status === 401) {
+                        removeToken()
+                        navigate('/timeOut', { replace: true })
+                    }
+                }
+            })
+        }
+    }, []);
+
     function handleChange(event) {
         const { value, name } = event.target
         setPostForm(prevNote => ({
@@ -30,7 +53,7 @@ export default function EditLayout({ post_id, tokenInfo }) {
             url = "/post/create";
         }
         else {
-            url = "/post/update";
+            url = `/post/${post_id}`;
         }
         axios({
             method: "POST",

@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Create from './pages/Create';
+import Update from './pages/Update';
 import NotFound from './pages/NotFound';
 import TimeOut from './pages/TimeOut';
 
@@ -26,6 +27,7 @@ export default function App() {
                     <>
                         <Route path="profile" element={<Profile {...tokenInfo} />} />
                         <Route path="profile/create" element={<Create {...tokenInfo} />} />
+                        <Route path="profile/update" element={<Update {...tokenInfo} />} />
                     </>
                 }
                 <Route path="/timeout" element={<TimeOut removeToken={removeToken} />} />

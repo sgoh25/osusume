@@ -114,8 +114,8 @@ def create_post():
 @bp.route("/<int:post_id>", methods=["POST", "GET", "DELETE"])
 @jwt_required()
 def post(post_id):
+    db = get_db()
     if request.method == "DELETE":
-        db = get_db()
         try:
             db.execute("DELETE from post where id = ?", (post_id,))
             db.commit()
@@ -127,4 +127,36 @@ def post(post_id):
             }
         except Exception as e:
             return {"msg", e}
+    elif request.method == "GET":
+        row_data = {}
+        try:
+            cursor = db.execute("SELECT * FROM post WHERE id = ?", (post_id,))
+            data = cursor.fetchone()
+            columns = [desc[0] for desc in cursor.description]
+            for col, val in zip(columns, data):
+                row_data[col] = val
+            return row_data
+        except Exception as e:
+            return {"msg", e}
+    elif request.method == "POST":
+        title = request.json.get("title", None)
+        description = request.json.get("description", None)
+        tag = request.json.get("tag", None)
+        error = None
+
+        if not title:
+            error = "Title is required."
+
+        if error is None:
+            try:
+                db.execute(
+                    "UPDATE post SET created = ?, title = ?, description = ?, tag = ? WHERE id = ?",
+                    (datetime.now(), title, description, tag, post_id),
+                )
+                db.commit()
+            except Exception as e:
+                error = e
+            else:
+                return {"msg": "Post updated"}
+        return {"msg": error}
     return {}

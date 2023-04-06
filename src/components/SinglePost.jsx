@@ -46,7 +46,7 @@ export default function SinglePost({ postInfo, tokenInfo, isProfile }) {
                     <h2>{post.title}</h2>
                     {isProfile &&
                         <div className="update_buttons">
-                            <Button className="button" onClick={() => navigate('/profile/update', { replace: true })}>Update</Button>
+                            <Button className="button" onClick={() => navigate('/profile/update', { replace: true, state: { post_id: post.id } })}>Update</Button>
                             <Button className="button" onClick={showModal}>Delete</Button>
                         </div>
                     }
