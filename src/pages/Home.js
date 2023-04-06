@@ -59,7 +59,7 @@ export default function Home({ token, saveToken, removeToken }) {
         })
     }
 
-    let invalidToken = (!token && token !== "" && token !== undefined)
+    let invalidToken = (!token && token !== "" && token !== undefined);
     let buttons = (
         <>
             {invalidToken &&

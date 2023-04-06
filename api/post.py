@@ -111,7 +111,7 @@ def create_post():
     return {"msg": error}
 
 
-@bp.route("/<int:post_id>", methods=["POST", "GET", "DELETE"])
+@bp.route("/<int:post_id>", methods=["POST", "DELETE"])
 @jwt_required()
 def post(post_id):
     db = get_db()
@@ -160,3 +160,17 @@ def post(post_id):
                 return {"msg": "Post updated"}
         return {"msg": error}
     return {}
+
+@bp.route("/<int:post_id>", methods=["GET"])
+def get_post(post_id):
+    db = get_db()
+    row_data = {}
+    try:
+        cursor = db.execute("SELECT * FROM post WHERE id = ?", (post_id,))
+        data = cursor.fetchone()
+        columns = [desc[0] for desc in cursor.description]
+        for col, val in zip(columns, data):
+            row_data[col] = val
+        return row_data
+    except Exception as e:
+        return {"msg", e}

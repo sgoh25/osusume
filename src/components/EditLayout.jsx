@@ -10,7 +10,7 @@ export default function EditLayout({ post_id, tokenInfo }) {
     let { token, saveToken, removeToken } = tokenInfo;
     let isCreate = (post_id == null);
     let [error, setError] = useState(null)
-    const [postForm, setPostForm] = useState({
+    let [postForm, setPostForm] = useState({
         title: "",
         description: "",
         tag: ""
