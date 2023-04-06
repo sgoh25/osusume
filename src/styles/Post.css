@@ -17,6 +17,16 @@
     margin-top: 1%;
 }
 
+.post_wrapper {
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(47, 48, 48);
+    display: block;
+    margin: 5% auto;
+    padding: 40px 0;
+    width: 70%;
+}
+
 .loading {
     font-size: large;
     text-align: center;
