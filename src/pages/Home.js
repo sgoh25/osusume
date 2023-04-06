@@ -15,7 +15,7 @@ export default function Home({ token, saveToken, removeToken }) {
         setPostsLoading(true);
         axios({
             method: "GET",
-            url: "/post/all",
+            url: "/post/home",
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
@@ -40,7 +40,11 @@ export default function Home({ token, saveToken, removeToken }) {
     let content = (
         <>
             {postsLoading && <div className="loading">Loading...</div>}
-            {posts != null && posts.map((element, idx) => <SinglePost post={element} isProfile={false} key={`${element}${idx}`} />)}
+            {
+                posts && posts.length !== 0 &&
+                posts.map((post, idx) => <SinglePost postInfo={{ post, setPosts }}
+                    tokenInfo={{ token, saveToken, removeToken }} isProfile={false} key={`${post}${idx}`} />)
+            }
         </>
     )
 

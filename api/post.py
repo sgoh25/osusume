@@ -50,12 +50,12 @@ def parse_row_data(data, columns):
             row_dict[col] = val
         posts.append(row_dict)
     if not posts:
-        return {}
+        return {"posts": []}
     return {"posts": posts}
 
 
-@bp.route("/all", methods=["GET"])
-def get_all():
+@bp.route("/home", methods=["GET"])
+def get_home_posts():
     db = get_db()
     cursor = db.execute("SELECT * FROM post ORDER BY created DESC")
     data = cursor.fetchmany(10)
@@ -65,7 +65,7 @@ def get_all():
 
 @bp.route("/profile", methods=["GET"])
 @jwt_required()
-def get_profile():
+def get_profile_posts():
     db = get_db()
     user_id = get_user_id(get_jwt_identity())
     cursor = db.execute(
@@ -109,3 +109,22 @@ def create_post():
         else:
             return {"msg": "New post created"}
     return {"msg": error}
+
+
+@bp.route("/<int:post_id>", methods=["POST", "GET", "DELETE"])
+@jwt_required()
+def post(post_id):
+    if request.method == "DELETE":
+        db = get_db()
+        try:
+            db.execute("DELETE from post where id = ?", (post_id,))
+            db.commit()
+            print(get_profile_posts(), file=sys.stdout)
+            return {
+                "msg": "Post deleted",
+                "profile_posts": get_profile_posts()["posts"],
+                "home_posts": get_home_posts()["posts"],
+            }
+        except Exception as e:
+            return {"msg", e}
+    return {}
