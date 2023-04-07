@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/Post.css';
 import Layout from '../components/Layout.jsx';
+import SingleComment from '../components/SingleComment';
 
 export default function Post({ token, saveToken, removeToken }) {
     const navigate = useNavigate();
@@ -25,6 +26,27 @@ export default function Post({ token, saveToken, removeToken }) {
             console.log(rsp.msg)
             rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
             setPost(rsp)
+        }).catch(function (error) {
+            if (error.response) {
+                console.log(error.response.data.msg)
+                if (error.response.status === 401) {
+                    removeToken()
+                    navigate('/timeOut', { replace: true })
+                }
+            }
+        })
+
+        axios({
+            method: "GET",
+            url: `/post/${post_id}/comment`,
+            headers: { Authorization: "Bearer " + token }
+        }).then((response) => {
+            let rsp = response.data;
+            console.log(rsp.msg)
+            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+            if (rsp.comments) {
+                setComments(rsp.comments);
+            }
         }).catch(function (error) {
             if (error.response) {
                 console.log(error.response.data.msg)
@@ -55,7 +77,9 @@ export default function Post({ token, saveToken, removeToken }) {
             console.log(rsp.msg)
             setError(null)
             rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
-            navigate('/post', { replace: true, state: { post_id: post.id } })
+            if (rsp.comments) {
+                setComments(rsp.comments);
+            }
         }).catch(function (error) {
             if (error.response) {
                 console.log(error.response.data.msg)
@@ -108,6 +132,11 @@ export default function Post({ token, saveToken, removeToken }) {
 
     let comment_block = (
         <>
+            {
+                comments && comments.length !== 0 &&
+                comments.map((comment, idx) => <SingleComment post_id={post_id} commentInfo={{ comment, setComments }}
+                    tokenInfo={{ token, saveToken, removeToken }} key={`${comment}${idx}`} />)
+            }
         </>
     )
 

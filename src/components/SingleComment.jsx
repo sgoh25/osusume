@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Post.css';
 
-export default function SinglePost({ postInfo, tokenInfo, isProfile }) {
+export default function SingleComment({ post_id, commentInfo, tokenInfo }) {
     const navigate = useNavigate();
-    let post = postInfo.post
+    let comment = commentInfo.comment
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const showModal = () => {
@@ -16,14 +16,13 @@ export default function SinglePost({ postInfo, tokenInfo, isProfile }) {
         setIsModalOpen(false);
         axios({
             method: "DELETE",
-            url: `/post/${post.id}`,
+            url: `/post/${post_id}/comment/${comment.id}`,
             headers: { Authorization: "Bearer " + tokenInfo.token }
         }).then((response) => {
             let rsp = response.data;
             console.log(rsp.msg)
             rsp.access_token && tokenInfo.saveToken(rsp.access_token, rsp.access_expiration)
-            isProfile && postInfo.setPosts(rsp.profile_posts)
-            !isProfile && postInfo.setPosts(rsp.home_posts)
+            commentInfo.setComments(rsp.comments)
         }).catch(function (error) {
             if (error.response) {
                 console.log(error.response.data.msg)
@@ -40,19 +39,19 @@ export default function SinglePost({ postInfo, tokenInfo, isProfile }) {
 
     return (
         <>
-            <div className="preview_wrapper">
-                <div className="preview" onClick={() => navigate(`/post/${post.id}`, { replace: true, state: { post_id: post.id } })}>
-                    <h2>{post.title}</h2>
-                    <p>By: {post.author} - {post.created && post.created.slice(0, -7)}</p>
+            <div className="comment">
+                <div className="comment_wrapper">
+                    <div className="comment_author">By: {comment.author} - {comment.created && comment.created.slice(0, -7)}</div>
+                    {comment.canEdit &&
+                        <div className="comment_delete">
+                            <Button className="button" onClick={showModal} danger>Delete</Button>
+                        </div>
+                    }
                 </div>
-                {isProfile &&
-                    <div className="edit_buttons">
-                        <Button className="button" onClick={() => navigate('/profile/update', { replace: true, state: { post_id: post.id } })}>Update</Button>
-                        <Button className="button" onClick={showModal} danger>Delete</Button>
-                    </div>
-                }
+                <hr />
+                <div className="comment_body">{comment.comment}</div>
                 <Modal title="Delete Confirmation" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-                    <p>Are you sure you want to delete this post?</p>
+                    <p>Are you sure you want to delete this comment?</p>
                 </Modal>
             </div>
         </>

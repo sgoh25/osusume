@@ -20,7 +20,7 @@ export default function App() {
         <div className="App">
             <Routes>
                 <Route exact path="/" element={<Home {...tokenInfo} />} />
-                <Route path="post" element={<Post {...tokenInfo} />} />
+                <Route path="post/:post_id" element={<Post {...tokenInfo} />} />
                 {!token && token !== "" && token !== undefined ?
                     <>
                         <Route path="login" element={<Login saveToken={saveToken} />} />

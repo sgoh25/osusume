@@ -8,6 +8,7 @@ from flask_jwt_extended import (
     get_jwt,
     get_jwt_identity,
     jwt_required,
+    verify_jwt_in_request,
 )
 
 from api.auth import get_expiration
@@ -42,17 +43,24 @@ def refresh_expiring_token(response):
         return response
 
 
+def parse_row(row, columns, user_id):
+    row_dict = {}
+    for col, val in zip(columns, row):
+        row_dict[col] = val
+    row_dict["canEdit"] = row_dict["author_id"] == user_id
+    return row_dict
+
+
 def parse_row_data(data, columns, user_id, isComment=False):
     key = "posts"
     if isComment:
         key = "comments"
     posts = []
-    for row in data:
-        row_dict = {}
-        for col, val in zip(columns, row):
-            row_dict[col] = val
-        row_dict["canEdit"] = row_dict["author_id"] == user_id
-        posts.append(row_dict)
+    if isinstance(data, dict):
+        parse_row(data, columns, user_id)
+    else:
+        for row in data:
+            posts.append(parse_row(row, columns, user_id))
     if not posts:
         return {key: []}
     return {key: posts}
@@ -157,14 +165,16 @@ def post(post_id):
 @bp.route("/<int:post_id>", methods=["GET"])
 def get_post(post_id):
     db = get_db()
-    row_data = {}
+    try:
+        verify_jwt_in_request()
+        user_id = get_user_id(get_jwt_identity())
+    except:
+        user_id = None
     try:
         cursor = db.execute("SELECT * FROM post WHERE id = ?", (post_id,))
         data = cursor.fetchone()
         columns = [desc[0] for desc in cursor.description]
-        for col, val in zip(columns, data):
-            row_data[col] = val
-        return row_data
+        return parse_row(data, columns, user_id)
     except Exception as e:
         return {"msg", e}
 
@@ -197,7 +207,36 @@ def make_comment(post_id):
         except Exception as e:
             error = e
         else:
-            return {"msg": "New comment created"}
+            return {
+                "msg": "New comment created",
+                "comments": get_comments(post_id)["comments"],
+            }
     return {"msg": error}
 
 
+@bp.route("/<int:post_id>/comment", methods=["GET"])
+def get_comments(post_id):
+    db = get_db()
+    try:
+        verify_jwt_in_request()
+        user_id = get_user_id(get_jwt_identity())
+    except:
+        user_id = None
+    cursor = db.execute(
+        "SELECT * FROM comment WHERE post_id = ? ORDER BY created DESC", (post_id,)
+    )
+    data = cursor.fetchmany(10)
+    columns = [desc[0] for desc in cursor.description]
+    return parse_row_data(data, columns, user_id, isComment=True)
+
+
+@bp.route("/<int:post_id>/comment/<int:comment_id>", methods=["DELETE"])
+@jwt_required()
+def delete_comment(post_id, comment_id):
+    db = get_db()
+    try:
+        db.execute("DELETE from comment where id = ?", (comment_id,))
+        db.commit()
+        return {"msg": "Post deleted", "comments": get_comments(post_id)["comments"]}
+    except Exception as e:
+        return {"msg", e}
