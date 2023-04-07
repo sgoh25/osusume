@@ -84,3 +84,22 @@ body {
     font-weight: bold;
     margin-top: 5%;
 }
+
+.kanna {
+    width: 650px;
+    height: 500px;
+}
+
+.not_found {
+    font-size: 35px;
+    font-weight: bold;
+    margin-top: 5%;
+    margin-bottom: 3%;
+}
+
+@media (max-width: 720px) {
+    .kanna {
+        width: 400px;
+        height: 300px;
+    }
+}

@@ -64,14 +64,14 @@ export default function DisplayLayout({ isProfile, tokenInfo }) {
             { label: "Home", key: "1", onClick: () => navigate('/', { replace: true }) },
             { label: "Logout", key: "3", danger: true, onClick: handleLogout }
         ];
-        menuProps = { items, };
+        menuProps = { items };
     }
     else {
         const items = [
             { label: "Profile", key: "2", onClick: () => navigate('/profile', { replace: true }) },
             { label: "Logout", key: "3", danger: true, onClick: handleLogout }
         ];
-        menuProps = { items, };
+        menuProps = { items };
     }
 
     let invalidToken = (!token && token !== "" && token !== undefined);

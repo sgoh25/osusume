@@ -3,6 +3,7 @@ import { Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
 import Layout from '../components/Layout.jsx';
+import kanna from '../styles/kanna.png';
 
 export default function TimeOut({ removeToken }) {
     const navigate = useNavigate();
@@ -31,6 +32,7 @@ export default function TimeOut({ removeToken }) {
         <>
             <div className="center">
                 <div className="timeout">You have been logged out due to inactivity.</div>
+                <img src={kanna} alt="timeout" className="kanna" />
             </div>
         </>
     )

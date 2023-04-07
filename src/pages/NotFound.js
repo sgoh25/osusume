@@ -18,7 +18,7 @@ export default function NotFound() {
     let body = (
         <>
             <div className="center">
-                <h1>404: Page Not Found!</h1>
+                <div className="not_found">404: Page Not Found!</div>
                 <img src={munchlax} alt="404" style={{ width: 400, height: 400 }} />
             </div>
         </>
