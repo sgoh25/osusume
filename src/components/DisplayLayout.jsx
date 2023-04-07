@@ -161,7 +161,7 @@ export default function DisplayLayout({ isProfile, tokenInfo }) {
                     <div className="category_wrapper">
                         <Select className="category"
                             defaultValue={category}
-                            onChange={() => handleCategorySelect()}
+                            onChange={handleCategorySelect}
                             options={[
                                 {
                                     value: 'My Posts',

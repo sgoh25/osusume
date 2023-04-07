@@ -2,7 +2,7 @@ textarea {
     font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     width: 75%;
     height: 80px;
-    margin: auto 10%;
+    margin: auto 10% 10px 10%;
     padding: 5px;
     border-style: solid;
     border-width: 1px;
@@ -187,6 +187,13 @@ hr {
     color: rgb(37, 79, 123);
     background-color: rgba(157, 193, 231, 0.733);
     box-shadow: 1px 1px 1px rgba(195, 191, 191, 0.684);
+}
+
+.tag_create {
+    display: flex;
+    width: 140px;
+    size: large;
+    margin: 5px 10%;
 }
 
 @media (max-width: 600px) {

@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { Button } from 'antd';
+import { Button, Select } from 'antd';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../styles/Login.css';
 import '../styles/Post.css';
 import Layout from './Layout.jsx';
 
@@ -43,6 +44,13 @@ export default function EditLayout({ post_id, tokenInfo }) {
         const { value, name } = event.target
         setPostForm(prevNote => ({
             ...prevNote, [name]: value
+        })
+        )
+    }
+
+    function handleSelect(value) {
+        setPostForm(prevNote => ({
+            ...prevNote, tag: value
         })
         )
     }
@@ -94,6 +102,20 @@ export default function EditLayout({ post_id, tokenInfo }) {
                     <input type="text" onChange={handleChange} placeholder="Title" name="title" text={postForm.title} value={postForm.title}></input>
                     <div className="label">Description:</div>
                     <textarea onChange={handleChange} placeholder="Description" name="description" text={postForm.description} value={postForm.description}></textarea>
+                    <div className="label">Tag:</div>
+                    <Select className="tag_create"
+                        onChange={handleSelect}
+                        options={[
+                            {
+                                value: 'Food',
+                                label: 'Food',
+                            },
+                            {
+                                value: 'Entertainment',
+                                label: 'Entertainment',
+                            },
+                        ]}
+                    />
                     {error != null && <div className="error">{error}</div>}
                     <div className="login_button">
                         <Button className="button" type="primary" onClick={() => handleSubmit(isCreate)}>Submit</Button>
