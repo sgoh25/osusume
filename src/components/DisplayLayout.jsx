@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Button, Dropdown } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { MenuOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
@@ -83,7 +83,7 @@ export default function DisplayLayout({ isProfile, tokenInfo }) {
                     <Button className="button" onClick={() => navigate('/register', { replace: true })}>Register</Button>
                 </div>
                 : <Dropdown menu={menuProps}>
-                    <Button className="button">Menu<DownOutlined /></Button>
+                    <Button className="button">Menu<MenuOutlined /></Button>
                 </Dropdown>
             }
         </>
