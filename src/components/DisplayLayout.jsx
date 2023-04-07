@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { Button } from 'antd';
+import { Button, Dropdown } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
@@ -57,30 +58,35 @@ export default function DisplayLayout({ isProfile, tokenInfo }) {
         })
     }
 
+    let menuProps;
+    if (isProfile) {
+        const items = [
+            { label: "Home", key: "1", onClick: () => navigate('/', { replace: true }) },
+            { label: "Logout", key: "3", danger: true, onClick: handleLogout }
+        ];
+        menuProps = { items, };
+    }
+    else {
+        const items = [
+            { label: "Profile", key: "2", onClick: () => navigate('/profile', { replace: true }) },
+            { label: "Logout", key: "3", danger: true, onClick: handleLogout }
+        ];
+        menuProps = { items, };
+    }
+
     let invalidToken = (!token && token !== "" && token !== undefined);
     let buttons = (
-        <div className="button_wrapper">
-            {isProfile ?
-                <>
-                    <Button className="button" onClick={() => navigate('/', { replace: true })}>Home</Button>
-                    <Button className="button" onClick={handleLogout}>Log Out</Button>
-                </>
-                : <>
-                    {invalidToken &&
-                        <>
-                            <Button className="button" onClick={() => navigate('/login', { replace: true })}>Log In</Button>
-                            <Button className="button" onClick={() => navigate('/register', { replace: true })}>Register</Button>
-                        </>
-                    }
-                    {!invalidToken &&
-                        <>
-                            <Button className="button" onClick={() => navigate('/profile', { replace: true })}>Profile</Button>
-                            <Button className="button" onClick={handleLogout}>Log Out</Button>
-                        </>
-                    }
-                </>
+        <>
+            {invalidToken ?
+                <div className="button_wrapper">
+                    <Button className="button" onClick={() => navigate('/login', { replace: true })}>Log In</Button>
+                    <Button className="button" onClick={() => navigate('/register', { replace: true })}>Register</Button>
+                </div>
+                : <Dropdown menu={menuProps}>
+                    <Button className="button">Menu<DownOutlined /></Button>
+                </Dropdown>
             }
-        </div>
+        </>
     )
 
     let content = (
