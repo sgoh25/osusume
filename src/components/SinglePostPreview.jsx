@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Post.css';
 
-export default function SinglePost({ postInfo, tokenInfo, isProfile }) {
+export default function SinglePostPreview({ postInfo, tokenInfo, isProfile }) {
     const navigate = useNavigate();
     let post = postInfo.post
 

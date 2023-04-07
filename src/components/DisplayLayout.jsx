@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
 import '../styles/Post.css';
 import Layout from './Layout';
-import SinglePost from './SinglePost.jsx';
+import SinglePostPreview from './SinglePostPreview.jsx';
 import SingleComment from './SingleComment';
 
 export default function DisplayLayout({ isProfile, tokenInfo }) {
@@ -102,7 +102,7 @@ export default function DisplayLayout({ isProfile, tokenInfo }) {
             {postsLoading && <div className="loading">Loading...</div>}
             {
                 category === "My Posts" && posts && posts.length !== 0 &&
-                posts.map((post, idx) => <SinglePost postInfo={{ post, setPosts }}
+                posts.map((post, idx) => <SinglePostPreview postInfo={{ post, setPosts }}
                     tokenInfo={{ token, saveToken, removeToken }} isProfile={isProfile} key={`${post}${idx}`} />)
             }
             {
