@@ -113,15 +113,15 @@ export default function DisplayLayout({ isProfile, tokenInfo }) {
         </>
     )
 
-    function handleCategorySelect() {
+    function handleCategorySelect(value) {
         let url;
-        if (category === "My Posts") {
-            setCategory("My Comments");
-            url = "/post/profile/comments";
-        }
-        else {
+        if (value === "My Posts") {
             setCategory("My Posts");
             url = "/post/profile/posts";
+        }
+        else {
+            setCategory("My Comments");
+            url = "/post/profile/comments";
         }
         axios({
             method: "GET",
