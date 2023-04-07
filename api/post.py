@@ -248,7 +248,8 @@ def get_comments(post_id):
     except:
         user_id = None
     cursor = db.execute(
-        "SELECT * FROM comment WHERE post_id = ? ORDER BY created DESC", (post_id,)
+        "SELECT * FROM comment WHERE post_id = ? ORDER BY score DESC, created DESC",
+        (post_id,),
     )
     data = cursor.fetchmany(10)
     columns = [desc[0] for desc in cursor.description]

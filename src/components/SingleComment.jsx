@@ -138,6 +138,13 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
     }
 
     let invalidToken = (!token && token !== "" && token !== undefined);
+    let score_class;
+    if (score == 0) {
+        score_class = "score";
+    }
+    else {
+        score_class = score > 0 ? "pos_score" : "neg_score";
+    }
     return (
         <>
             {isPreview ?
@@ -170,7 +177,7 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
                             disabled={invalidToken || (!canVote && !isUpvote && isUpvote != null)}>
                             <DislikeOutlined style={{ fontSize: '12px' }} />
                         </Button>
-                        <div className="score">{score}</div>
+                        <div className={score_class}>{score}</div>
                         <Button className="vote_button" onClick={() => handleVote(true)}
                             disabled={invalidToken || (!canVote && isUpvote && isUpvote != null)}>
                             <LikeOutlined style={{ fontSize: '12px' }} />

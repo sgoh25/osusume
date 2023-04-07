@@ -160,12 +160,22 @@ hr {
     box-shadow: 0.5px 1px 1px rgba(195, 191, 191, 0.684);
 }
 
-.score {
+.score,
+.neg_score,
+.pos_score {
     font-weight: bold;
     font-size: 14px;
     color: rgba(59, 58, 58, 0.898);
     margin-right: 4px;
     margin: auto 8px;
+}
+
+.neg_score {
+    color: rgba(206, 45, 45, 0.949);
+}
+
+.pos_score {
+    color: rgba(62, 156, 62, 0.952);
 }
 
 .post_title,
