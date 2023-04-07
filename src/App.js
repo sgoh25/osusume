@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Create from './pages/Create';
 import Update from './pages/Update';
+import Post from './pages/Post';
 import NotFound from './pages/NotFound';
 import TimeOut from './pages/TimeOut';
 
@@ -19,6 +20,7 @@ export default function App() {
         <div className="App">
             <Routes>
                 <Route exact path="/" element={<Home {...tokenInfo} />} />
+                <Route path="post" element={<Post {...tokenInfo} />} />
                 {!token && token !== "" && token !== undefined ?
                     <>
                         <Route path="login" element={<Login saveToken={saveToken} />} />

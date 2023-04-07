@@ -44,7 +44,7 @@ export default function SinglePost({ postInfo, tokenInfo, isProfile }) {
             <div className="preview_wrapper">
                 <div className="preview" onClick={() => navigate('/post', { replace: true, state: { post_id: post.id } })}>
                     <h2>{post.title}</h2>
-                    <p>By: {post.author} - {post.created.slice(0, -7)}</p>
+                    <p>By: {post.author} - {post.created && post.created.slice(0, -7)}</p>
                 </div>
                 {isProfile &&
                     <div className="edit_buttons">
