@@ -74,13 +74,17 @@ def get_home_posts():
     columns = [desc[0] for desc in cursor.description]
     return parse_row_data(data, columns, None)
 
+
 @bp.route("/home/<tag_id>", methods=["GET"])
 def get_tag_posts(tag_id):
     db = get_db()
-    cursor = db.execute("SELECT * FROM post WHERE tag=? ORDER BY created DESC", (tag_id,))
+    cursor = db.execute(
+        "SELECT * FROM post WHERE tag=? ORDER BY created DESC", (tag_id,)
+    )
     data = cursor.fetchmany(10)
     columns = [desc[0] for desc in cursor.description]
     return parse_row_data(data, columns, None)
+
 
 @bp.route("/profile/posts", methods=["GET"])
 @jwt_required()
@@ -202,8 +206,8 @@ def get_post(post_id):
 @bp.route("/<int:post_id>/comment", methods=["POST"])
 @jwt_required()
 def make_comment(post_id):
-    db = get_db()
     comment = request.json.get("comment", None)
+    db = get_db()
     error = None
 
     if not comment:
@@ -214,13 +218,14 @@ def make_comment(post_id):
             author = get_jwt_identity()
             author_id = get_user_id(author)
             db.execute(
-                "INSERT INTO comment (post_id, author_id, author, created, comment) VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO comment (post_id, author_id, author, created, comment, score) VALUES (?, ?, ?, ?, ?, ?)",
                 (
                     post_id,
                     author_id,
                     author,
                     datetime.now(),
                     comment,
+                    0,
                 ),
             )
             db.commit()
@@ -270,5 +275,82 @@ def delete_profile_comment(comment_id):
         db.execute("DELETE from comment where id = ?", (comment_id,))
         db.commit()
         return {"msg": "Post deleted", "comments": get_profile_comments()["comments"]}
+    except Exception as e:
+        return {"msg", e}
+
+
+@bp.route("/<int:post_id>/comment/<int:comment_id>/getvote", methods=["GET"])
+def get_vote(post_id, comment_id):
+    db = get_db()
+    try:
+        verify_jwt_in_request()
+        user_id = get_user_id(get_jwt_identity())
+        cursor = db.execute(
+            "SELECT * FROM vote WHERE post_id = ? AND comment_id = ? AND author_id = ?",
+            (post_id, comment_id, user_id),
+        )
+        data = cursor.fetchone()
+        columns = [desc[0] for desc in cursor.description]
+        response = {"canVote": not data, "isUpvote": None}
+        if data:
+            row = parse_row(data, columns, user_id)
+            response["isUpvote"] = row["is_upvote"]
+        return response
+    except Exception as e:
+        return {"msg", e}
+
+
+@bp.route("/<int:post_id>/comment/<int:comment_id>/vote", methods=["POST", "DELETE"])
+@jwt_required()
+def do_vote(post_id, comment_id):
+    is_upvote = request.json.get("is_upvote", None)
+    remove_vote = request.json.get("remove_vote", None)
+    score = request.json.get("score", None)
+    author_id = get_user_id(get_jwt_identity())
+    db = get_db()
+    if request.method == "POST":
+        try:
+            canVote = get_vote(post_id, comment_id)["canVote"]
+            if canVote:
+                if not remove_vote:
+                    db.execute(
+                        "INSERT INTO vote (post_id, comment_id, author_id, is_upvote) VALUES (?, ?, ?, ?)",
+                        (post_id, comment_id, author_id, is_upvote),
+                    )
+                db.execute(
+                    "UPDATE comment SET score = ? WHERE post_id = ? AND id = ?",
+                    (score, post_id, comment_id),
+                )
+                db.commit()
+                return {"msg": "Vote casted"}
+            return {"msg": "Already voted"}, 400
+        except Exception as e:
+            return {"msg", e}
+    elif request.method == "DELETE":
+        try:
+            print(post_id, comment_id, author_id, file=sys.stdout)
+            db.execute(
+                "DELETE from vote where post_id = ? AND comment_id = ? AND author_id = ?",
+                (post_id, comment_id, author_id),
+            )
+            db.commit()
+            return {"msg": "Vote deleted"}
+        except Exception as e:
+            return {"msg", e}
+
+
+@bp.route("/<int:post_id>/comment/<int:comment_id>/deletevote", methods=["DELETE"])
+@jwt_required()
+def delete_vote(post_id, comment_id):
+    author_id = get_user_id(get_jwt_identity())
+    db = get_db()
+    try:
+        print(post_id, comment_id, author_id, file=sys.stdout)
+        db.execute(
+            "DELETE from vote where post_id = ? AND comment_id = ? AND author_id = ?",
+            (post_id, comment_id, author_id),
+        )
+        db.commit()
+        return {"msg": "Vote deleted"}
     except Exception as e:
         return {"msg", e}
