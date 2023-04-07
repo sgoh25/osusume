@@ -1,27 +1,35 @@
 import axios from 'axios';
-import { Button, Dropdown } from 'antd';
+import { Button, Dropdown, Select } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
 import '../styles/Post.css';
-import Layout from '../components/Layout.jsx';
-import SinglePost from '../components/SinglePost.jsx';
+import Layout from './Layout';
+import SinglePost from './SinglePost.jsx';
+import SingleComment from './SingleComment';
 
 export default function DisplayLayout({ isProfile, tokenInfo }) {
     const navigate = useNavigate();
     let { token, saveToken, removeToken } = tokenInfo;
     const [posts, setPosts] = useState([]);
+    const [comments, setComments] = useState([]);
     const [postsLoading, setPostsLoading] = useState(false);
+    const [category, setCategory] = useState("My Posts");
 
     useEffect(() => {
         setPostsLoading(true);
         let url;
         if (isProfile) {
-            url = "/post/profile"
+            if (category === "My Posts") {
+                url = "/post/profile/posts";
+            }
+            else {
+                url = "/post/profile/comments";
+            }
         }
         else {
-            url = "/post/home"
+            url = "/post/home";
         }
         axios({
             method: "GET",
@@ -93,22 +101,78 @@ export default function DisplayLayout({ isProfile, tokenInfo }) {
         <>
             {postsLoading && <div className="loading">Loading...</div>}
             {
-                posts && posts.length !== 0 &&
+                category === "My Posts" && posts && posts.length !== 0 &&
                 posts.map((post, idx) => <SinglePost postInfo={{ post, setPosts }}
                     tokenInfo={{ token, saveToken, removeToken }} isProfile={isProfile} key={`${post}${idx}`} />)
             }
+            {
+                category === "My Comments" && comments && comments.length !== 0 &&
+                comments.map((comment, idx) => <SingleComment post_id={comment.post_id} commentInfo={{ comment, setComments }}
+                    tokenInfo={{ token, saveToken, removeToken }} isPreview={true} key={`${comment}${idx}`} />)
+            }
         </>
     )
+
+    function handleCategorySelect() {
+        let url;
+        if (category === "My Posts") {
+            setCategory("My Comments");
+            url = "/post/profile/comments";
+        }
+        else {
+            setCategory("My Posts");
+            url = "/post/profile/posts";
+        }
+        axios({
+            method: "GET",
+            url: url,
+            headers: { Authorization: "Bearer " + token }
+        }).then((response) => {
+            let rsp = response.data;
+            console.log(rsp.msg)
+            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+            if (rsp.posts) {
+                setPosts(rsp.posts);
+            }
+            if (rsp.comments) {
+                setComments(rsp.comments);
+            }
+        }).catch(function (error) {
+            if (error.response) {
+                console.log(error.response.data.msg)
+                if (error.response.status === 401) {
+                    removeToken()
+                    navigate('/timeOut', { replace: true })
+                }
+            }
+        })
+    }
 
     let body = (
         <>
             {isProfile ?
                 <>
                     <div className="top_profile">
-                        <div className="profile_title">Your Posts</div>
+                        <div className="profile_title">{category}</div>
                         <div className="create_button">
                             <Button className="button" onClick={() => navigate('/profile/create', { replace: true })}>Create Post</Button>
                         </div>
+                    </div>
+                    <div className="category_wrapper">
+                        <Select className="category"
+                            defaultValue={category}
+                            onChange={() => handleCategorySelect()}
+                            options={[
+                                {
+                                    value: 'My Posts',
+                                    label: 'My Posts',
+                                },
+                                {
+                                    value: 'My Comments',
+                                    label: 'My Comments',
+                                },
+                            ]}
+                        />
                     </div>
                 </>
                 : <>

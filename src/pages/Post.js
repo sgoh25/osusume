@@ -135,7 +135,7 @@ export default function Post({ token, saveToken, removeToken }) {
             {
                 comments && comments.length !== 0 &&
                 comments.map((comment, idx) => <SingleComment post_id={post_id} commentInfo={{ comment, setComments }}
-                    tokenInfo={{ token, saveToken, removeToken }} key={`${comment}${idx}`} />)
+                    tokenInfo={{ token, saveToken, removeToken }} isPreview={false} key={`${comment}${idx}`} />)
             }
         </>
     )

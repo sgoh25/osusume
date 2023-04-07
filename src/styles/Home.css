@@ -67,6 +67,42 @@ body {
     min-height: 100vh;
 }
 
+.top_profile {
+    padding: 25px;
+    padding-bottom: 0;
+    margin: 1%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.profile_title {
+    font-weight: bold;
+    font-size: 30px;
+    margin-top: 1%;
+    text-shadow: 0.5px 0.5px 0.5px rgba(195, 191, 191, 0.684);
+}
+
+.create_button {
+    display: inline-block;
+    margin-top: 1%;
+}
+
+.category_wrapper {
+    padding: 25px;
+    padding-top: 0;
+    margin: 1%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.category {
+    font-weight: bold;
+    font-size: 50px;
+    text-shadow: 0.5px 0.5px 0.5px rgba(195, 191, 191, 0.684);
+    width: 140px;
+    size: large;
+}
+
 .center {
     text-align: center;
     padding: 1rem 0;

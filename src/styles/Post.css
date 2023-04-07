@@ -26,25 +26,6 @@ hr {
     border-color: rgba(131, 131, 131, 0.386);
 }
 
-.top_profile {
-    padding: 25px;
-    margin: 1% 1% 2.5% 1%;
-    display: flex;
-    justify-content: space-between;
-}
-
-.profile_title {
-    font-weight: bold;
-    font-size: 30px;
-    margin-top: 1%;
-    text-shadow: 0.5px 0.5px 0.5px rgba(195, 191, 191, 0.684);
-}
-
-.create_button {
-    display: inline-block;
-    margin-top: 1%;
-}
-
 .edit_wrapper {
     border-style: solid;
     border-width: 1px;
@@ -65,12 +46,14 @@ hr {
     margin-top: 5%;
 }
 
-.preview_wrapper {
+.preview_wrapper,
+.comment_preview_wrapper {
     display: flex;
     justify-content: space-evenly;
 }
 
-.preview {
+.preview,
+.comment_preview {
     border-style: solid;
     border-width: 1px;
     border-radius: 12px;
@@ -83,12 +66,23 @@ hr {
     width: 100%;
 }
 
-.edit_buttons {
+.comment_preview {
+    display: block;
+    padding: 20px 0;
+    width: 100%;
+}
+
+.edit_buttons,
+.comment_edit_buttons {
     display: flex;
     flex-direction: column;
     align-items: right;
     padding-top: 20px;
     padding-left: 20px;
+}
+
+.comment_edit_buttons {
+    padding-top: 30px;
 }
 
 .post,

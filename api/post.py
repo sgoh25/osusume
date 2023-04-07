@@ -75,7 +75,7 @@ def get_home_posts():
     return parse_row_data(data, columns, None)
 
 
-@bp.route("/profile", methods=["GET"])
+@bp.route("/profile/posts", methods=["GET"])
 @jwt_required()
 def get_profile_posts():
     db = get_db()
@@ -86,6 +86,19 @@ def get_profile_posts():
     data = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
     return parse_row_data(data, columns, user_id)
+
+
+@bp.route("/profile/comments", methods=["GET"])
+@jwt_required()
+def get_profile_comments():
+    db = get_db()
+    user_id = get_user_id(get_jwt_identity())
+    cursor = db.execute(
+        "SELECT * FROM comment WHERE author_id = ? ORDER BY created DESC", (user_id,)
+    )
+    data = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    return parse_row_data(data, columns, user_id, isComment=True)
 
 
 @bp.route("/create", methods=["POST"])
@@ -238,5 +251,17 @@ def delete_comment(post_id, comment_id):
         db.execute("DELETE from comment where id = ?", (comment_id,))
         db.commit()
         return {"msg": "Post deleted", "comments": get_comments(post_id)["comments"]}
+    except Exception as e:
+        return {"msg", e}
+
+
+@bp.route("/comment/<int:comment_id>", methods=["DELETE"])
+@jwt_required()
+def delete_profile_comment(comment_id):
+    db = get_db()
+    try:
+        db.execute("DELETE from comment where id = ?", (comment_id,))
+        db.commit()
+        return {"msg": "Post deleted", "comments": get_profile_comments()["comments"]}
     except Exception as e:
         return {"msg", e}

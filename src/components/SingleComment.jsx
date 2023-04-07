@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Post.css';
 
-export default function SingleComment({ post_id, commentInfo, tokenInfo }) {
+export default function SingleComment({ post_id, commentInfo, tokenInfo, isPreview }) {
     const navigate = useNavigate();
     let comment = commentInfo.comment
 
@@ -14,9 +14,16 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo }) {
     };
     const handleOk = () => {
         setIsModalOpen(false);
+        let url;
+        if (isPreview) {
+            url = `/post/comment/${comment.id}`;
+        }
+        else {
+            url = `/post/${post_id}/comment/${comment.id}`;
+        }
         axios({
             method: "DELETE",
-            url: `/post/${post_id}/comment/${comment.id}`,
+            url: url,
             headers: { Authorization: "Bearer " + tokenInfo.token }
         }).then((response) => {
             let rsp = response.data;
@@ -39,21 +46,36 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo }) {
 
     return (
         <>
-            <div className="comment">
-                <div className="comment_wrapper">
-                    <div className="comment_author">By: {comment.author} - {comment.created && comment.created.slice(0, -7)}</div>
-                    {comment.canEdit &&
-                        <div className="comment_delete">
-                            <Button className="button" onClick={showModal} danger>Delete</Button>
-                        </div>
-                    }
+            {isPreview ?
+                <div className="comment_preview_wrapper">
+                    <div className="comment_preview" onClick={() => navigate(`/post/${post_id}`, { replace: true, state: { post_id: post_id } })}>
+                        <div className="comment_author">By: {comment.author} - {comment.created && comment.created.slice(0, -7)}</div>
+                        <hr />
+                        <div className="comment_body">{comment.comment}</div>
+                    </div>
+                    <div className="comment_edit_buttons">
+                        <Button className="button" onClick={showModal} danger>Delete</Button>
+                    </div>
+                    <Modal title="Delete Confirmation" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                        <p>Are you sure you want to delete this post?</p>
+                    </Modal>
                 </div>
-                <hr />
-                <div className="comment_body">{comment.comment}</div>
-                <Modal title="Delete Confirmation" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-                    <p>Are you sure you want to delete this comment?</p>
-                </Modal>
-            </div>
+                : <div className="comment">
+                    <div className="comment_wrapper">
+                        <div className="comment_author">By: {comment.author} - {comment.created && comment.created.slice(0, -7)}</div>
+                        {comment.canEdit &&
+                            <div className="comment_delete">
+                                <Button className="button" onClick={showModal} danger>Delete</Button>
+                            </div>
+                        }
+                    </div>
+                    <hr />
+                    <div className="comment_body">{comment.comment}</div>
+                    <Modal title="Delete Confirmation" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                        <p>Are you sure you want to delete this comment?</p>
+                    </Modal>
+                </div>
+            }
         </>
     )
 }
