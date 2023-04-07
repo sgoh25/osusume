@@ -3,7 +3,7 @@ import { Button, Dropdown, Select } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTagList } from './utils';
+import { getTagList, getMenuItems } from './utils';
 import '../styles/Home.css';
 import '../styles/Post.css';
 import Layout from './Layout';
@@ -52,30 +52,13 @@ export default function DisplayLayout({ tag_id, isProfile, tokenInfo }) {
         })
     }, [tag]);
 
-    function handleLogout() {
-        axios.post("/auth/logout").then((response) => {
-            console.log(response.data.msg)
-            removeToken()
-        }).catch(function (error) {
-            if (error.response) {
-                console.log(error.response.data.msg)
-            }
-        })
-    }
-
     let menuProps;
     if (isProfile) {
-        const items = [
-            { label: "Home", key: "1", onClick: () => navigate('/', { replace: true }) },
-            { label: "Logout", key: "3", danger: true, onClick: handleLogout }
-        ];
+        const items = getMenuItems({ home: 1, logout: 1 }, navigate, removeToken);
         menuProps = { items };
     }
     else {
-        const items = [
-            { label: "Profile", key: "2", onClick: () => navigate('/profile', { replace: true }) },
-            { label: "Logout", key: "3", danger: true, onClick: handleLogout }
-        ];
+        const items = getMenuItems({ profile: 1, logout: 1 }, navigate, removeToken);
         menuProps = { items };
     }
 

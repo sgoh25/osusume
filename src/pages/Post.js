@@ -3,6 +3,7 @@ import { Button, Dropdown, Tag } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getMenuItems } from '../components/utils';
 import '../styles/Post.css';
 import Layout from '../components/Layout.jsx';
 import SingleComment from '../components/SingleComment';
@@ -90,35 +91,14 @@ export default function Post({ token, saveToken, removeToken }) {
         setCommentForm(({ comment: "" }))
     }
 
-    function handleLogout() {
-        axios.post("/auth/logout").then((response) => {
-            console.log(response.data.msg)
-            removeToken()
-            navigate("/", { replace: true })
-        }).catch(function (error) {
-            if (error.response) {
-                console.log(error.response.data.msg)
-            }
-        })
-    }
-
     let invalidToken = (!token && token !== "" && token !== undefined);
     let menuProps;
     if (invalidToken) {
-        const items = [
-            { label: "Home", key: "1", onClick: () => navigate('/', { replace: true }) },
-            { type: 'divider' },
-            { label: "Log In", key: "4", onClick: () => navigate('/login', { replace: true }) },
-            { label: "Register", key: "5", onClick: () => navigate('/register', { replace: true }) }
-        ];
+        const items = getMenuItems({ home: 1, divider: 1, login: 1, register: 1 }, navigate, removeToken);
         menuProps = { items };
     }
     else {
-        const items = [
-            { label: "Home", key: "1", onClick: () => navigate('/', { replace: true }) },
-            { label: "Profile", key: "2", onClick: () => navigate('/profile', { replace: true }) },
-            { label: "Logout", key: "3", danger: true, onClick: handleLogout }
-        ];
+        const items = getMenuItems({ home: 1, profile: 1, logout: 1 }, navigate, removeToken);
         menuProps = { items };
     }
 
