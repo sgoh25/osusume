@@ -42,16 +42,20 @@ def refresh_expiring_token(response):
         return response
 
 
-def parse_row_data(data, columns):
+def parse_row_data(data, columns, user_id, isComment=False):
+    key = "posts"
+    if isComment:
+        key = "comments"
     posts = []
     for row in data:
         row_dict = {}
         for col, val in zip(columns, row):
             row_dict[col] = val
+        row_dict["canEdit"] = row_dict["author_id"] == user_id
         posts.append(row_dict)
     if not posts:
-        return {"posts": []}
-    return {"posts": posts}
+        return {key: []}
+    return {key: posts}
 
 
 @bp.route("/home", methods=["GET"])
@@ -60,7 +64,7 @@ def get_home_posts():
     cursor = db.execute("SELECT * FROM post ORDER BY created DESC")
     data = cursor.fetchmany(10)
     columns = [desc[0] for desc in cursor.description]
-    return parse_row_data(data, columns)
+    return parse_row_data(data, columns, None)
 
 
 @bp.route("/profile", methods=["GET"])
@@ -73,7 +77,7 @@ def get_profile_posts():
     )
     data = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
-    return parse_row_data(data, columns)
+    return parse_row_data(data, columns, user_id)
 
 
 @bp.route("/create", methods=["POST"])
@@ -119,23 +123,11 @@ def post(post_id):
         try:
             db.execute("DELETE from post where id = ?", (post_id,))
             db.commit()
-            print(get_profile_posts(), file=sys.stdout)
             return {
                 "msg": "Post deleted",
                 "profile_posts": get_profile_posts()["posts"],
                 "home_posts": get_home_posts()["posts"],
             }
-        except Exception as e:
-            return {"msg", e}
-    elif request.method == "GET":
-        row_data = {}
-        try:
-            cursor = db.execute("SELECT * FROM post WHERE id = ?", (post_id,))
-            data = cursor.fetchone()
-            columns = [desc[0] for desc in cursor.description]
-            for col, val in zip(columns, data):
-                row_data[col] = val
-            return row_data
         except Exception as e:
             return {"msg", e}
     elif request.method == "POST":
@@ -161,6 +153,7 @@ def post(post_id):
         return {"msg": error}
     return {}
 
+
 @bp.route("/<int:post_id>", methods=["GET"])
 def get_post(post_id):
     db = get_db()
@@ -174,3 +167,37 @@ def get_post(post_id):
         return row_data
     except Exception as e:
         return {"msg", e}
+
+
+@bp.route("/<int:post_id>/comment", methods=["POST"])
+@jwt_required()
+def make_comment(post_id):
+    db = get_db()
+    comment = request.json.get("comment", None)
+    error = None
+
+    if not comment:
+        error = "Comment cannot be empty."
+
+    if error is None:
+        try:
+            author = get_jwt_identity()
+            author_id = get_user_id(author)
+            db.execute(
+                "INSERT INTO comment (post_id, author_id, author, created, comment) VALUES (?, ?, ?, ?, ?)",
+                (
+                    post_id,
+                    author_id,
+                    author,
+                    datetime.now(),
+                    comment,
+                ),
+            )
+            db.commit()
+        except Exception as e:
+            error = e
+        else:
+            return {"msg": "New comment created"}
+    return {"msg": error}
+
+

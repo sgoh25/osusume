@@ -12,9 +12,8 @@ export default function Post({ token, saveToken, removeToken }) {
     const { post_id } = state;
     let [error, setError] = useState(null)
     let [post, setPost] = useState({})
-    // let [commentForm, setCommentForm] = useState({
-    //     comment: "",
-    // })
+    let [comments, setComments] = useState([])
+    let [commentForm, setCommentForm] = useState({ comment: "" })
 
     useEffect(() => {
         axios({
@@ -26,7 +25,6 @@ export default function Post({ token, saveToken, removeToken }) {
             console.log(rsp.msg)
             rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
             setPost(rsp)
-            // setCommentForm({ title: rsp.title, description: rsp.description, tag: rsp.tag })
         }).catch(function (error) {
             if (error.response) {
                 console.log(error.response.data.msg)
@@ -38,37 +36,35 @@ export default function Post({ token, saveToken, removeToken }) {
         })
     }, []);
 
-    // function handleChange(event) {
-    //     const { value, name } = event.target
-    //     setCommentForm(prevNote => ({
-    //         ...prevNote, [name]: value
-    //     })
-    //     )
-    // }
+    function handleChange(event) {
+        const { value, name } = event.target
+        setCommentForm(prevNote => ({
+            ...prevNote, [name]: value
+        })
+        )
+    }
 
-    // function handleSubmit() {
-    //     let url;
-    //     url = `/post/${post_id}/comment`;
-    //     axios({
-    //         method: "POST",
-    //         url: url,
-    //         data: { comment: commentForm.comment },
-    //         headers: { Authorization: "Bearer " + token }
-    //     }).then((response) => {
-    //         let rsp = response.data
-    //         console.log(rsp.msg)
-    //         setError(null)
-    //         rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
-    //         navigate('/post', { replace: true, state: { post_id: post.id } })
-    //     }).catch(function (error) {
-    //         if (error.response) {
-    //             console.log(error.response.data.msg)
-    //             setError(error.response.data.msg)
-    //         }
-    //     })
+    function handleSubmit() {
+        axios({
+            method: "POST",
+            url: `/post/${post_id}/comment`,
+            data: { comment: commentForm.comment },
+            headers: { Authorization: "Bearer " + token }
+        }).then((response) => {
+            let rsp = response.data
+            console.log(rsp.msg)
+            setError(null)
+            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+            navigate('/post', { replace: true, state: { post_id: post.id } })
+        }).catch(function (error) {
+            if (error.response) {
+                console.log(error.response.data.msg)
+                setError(error.response.data.msg)
+            }
+        })
 
-    //     setCommentForm(({ comment: "" }))
-    // }
+        setCommentForm(({ comment: "" }))
+    }
 
     function handleLogout() {
         axios.post("/auth/logout").then((response) => {
@@ -110,26 +106,35 @@ export default function Post({ token, saveToken, removeToken }) {
         </>
     )
 
+    let comment_block = (
+        <>
+        </>
+    )
+
     let body = (
         <>
             <div className="post">
                 <div className="post_title">{post.title}</div>
                 <div className="post_author">By: {post.author} - {post.created && post.created.slice(0, -7)}</div>
-                <hr/>
+                <hr />
                 <div className="post_body">{post.description}</div>
                 <Button className="post_tag">TagButton{post.tag}</Button>
-            {/* <form>
-                    <div className="label">Title:</div>
-                    <input type="text" onChange={handleChange} placeholder="Title" name="title" text={postForm.title} value={postForm.title}></input>
-                    <div className="label">Description:</div>
-                    <textarea onChange={handleChange} placeholder="Description" name="description" text={postForm.description} value={postForm.description}></textarea>
-                    {error != null && <div className="error">{error}</div>}
-                    <div className="login_button">
-                        <Button className="button" type="primary" onClick={() => handleSubmit(isCreate)}>Submit</Button>
-                        <Button className="button" onClick={() => navigate('/profile', { replace: true })}>Cancel</Button>
-                    </div>
-                </form> */}
             </div>
+            {!invalidToken &&
+                <div className="comment">
+                    <form>
+                        <div className='comment_text_wrapper'>
+                            <textarea className="comment_text" onChange={handleChange} placeholder="Comment" name="comment" text={commentForm.comment} value={commentForm.comment}></textarea>
+
+                            {error != null && <div className="error">{error}</div>}
+                            <div className="comment_button">
+                                <Button className="button" type="primary" onClick={() => handleSubmit()}>Submit</Button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            }
+            <>{comment_block}</>
         </>
     )
 
