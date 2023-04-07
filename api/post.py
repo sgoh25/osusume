@@ -74,6 +74,13 @@ def get_home_posts():
     columns = [desc[0] for desc in cursor.description]
     return parse_row_data(data, columns, None)
 
+@bp.route("/home/<tag_id>", methods=["GET"])
+def get_tag_posts(tag_id):
+    db = get_db()
+    cursor = db.execute("SELECT * FROM post WHERE tag=? ORDER BY created DESC", (tag_id,))
+    data = cursor.fetchmany(10)
+    columns = [desc[0] for desc in cursor.description]
+    return parse_row_data(data, columns, None)
 
 @bp.route("/profile/posts", methods=["GET"])
 @jwt_required()

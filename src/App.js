@@ -21,6 +21,7 @@ export default function App() {
             <Routes>
                 <Route exact path="/" element={<Home {...tokenInfo} />} />
                 <Route path="post/:post_id" element={<Post {...tokenInfo} />} />
+                <Route path="tag/:tag_id" element={<Home {...tokenInfo} />} />
                 {!token && token !== "" && token !== undefined ?
                     <>
                         <Route path="login" element={<Login saveToken={saveToken} />} />

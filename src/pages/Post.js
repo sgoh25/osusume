@@ -147,7 +147,7 @@ export default function Post({ token, saveToken, removeToken }) {
                 <div className="post_author">By: {post.author} - {post.created && post.created.slice(0, -7)}</div>
                 <hr />
                 <div className="post_body">{post.description}</div>
-                {post.tag && <Button className="post_tag">{post.tag}</Button>}
+                {post.tag && <Button className="post_tag" onClick={() => navigate(`/tag/${post.tag}`, { replace: true, state: { tag_id: post.tag } })}>{post.tag}</Button>}
             </div>
             {!invalidToken &&
                 <div className="comment">

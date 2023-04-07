@@ -82,6 +82,32 @@ body {
     text-shadow: 0.5px 0.5px 0.5px rgba(195, 191, 191, 0.684);
 }
 
+.tag_title_wrapper {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 1px;
+}
+
+.tag_pretitle {
+    font-size: 25px;
+    font-weight: bold;
+    margin-top: 2px;
+    margin-right: 8px;
+}
+
+.tag_title {
+    height: auto;
+    padding: 2px 8px;
+    font-size: 25px;
+    font-weight: bold;
+    border-style: solid;
+    border-radius: 5px;
+    border-color: rgba(148, 183, 221, 0.92);
+    color: rgb(37, 79, 123);
+    background-color: rgba(157, 193, 231, 0.733);
+    box-shadow: 1px 1px 1px rgba(195, 191, 191, 0.684);
+}
+
 .create_button {
     display: inline-block;
     margin-top: 1%;
@@ -95,16 +121,15 @@ body {
     justify-content: space-between;
 }
 
-.category {
-    font-weight: bold;
-    text-shadow: 0.5px 0.5px 0.5px rgba(195, 191, 191, 0.684);
+.category,
+.tag {
     width: 140px;
     size: large;
 }
 
 .center {
     text-align: center;
-    padding: 1rem 0;
+    padding-top: 1rem;
     text-shadow: 1px 1px 1px rgba(195, 191, 191, 0.684);
 }
 

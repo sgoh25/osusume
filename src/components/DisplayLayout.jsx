@@ -3,33 +3,30 @@ import { Button, Dropdown, Select } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getTagList } from './utils';
 import '../styles/Home.css';
 import '../styles/Post.css';
 import Layout from './Layout';
 import SinglePostPreview from './SinglePostPreview.jsx';
 import SingleComment from './SingleComment';
 
-export default function DisplayLayout({ isProfile, tokenInfo }) {
+export default function DisplayLayout({ tag_id, isProfile, tokenInfo }) {
     const navigate = useNavigate();
     let { token, saveToken, removeToken } = tokenInfo;
     const [posts, setPosts] = useState([]);
     const [comments, setComments] = useState([]);
     const [postsLoading, setPostsLoading] = useState(false);
     const [category, setCategory] = useState("My Posts");
+    const [tag, setTag] = useState(tag_id)
 
     useEffect(() => {
         setPostsLoading(true);
         let url;
         if (isProfile) {
-            if (category === "My Posts") {
-                url = "/post/profile/posts";
-            }
-            else {
-                url = "/post/profile/comments";
-            }
+            url = (category === "My Posts") ? "/post/profile/posts" : "/post/profile/comments";
         }
         else {
-            url = "/post/home";
+            url = tag ? `/post/home/${tag}` : "/post/home";
         }
         axios({
             method: "GET",
@@ -53,7 +50,7 @@ export default function DisplayLayout({ isProfile, tokenInfo }) {
         }).finally(function () {
             setPostsLoading(false);
         })
-    }, []);
+    }, [tag]);
 
     function handleLogout() {
         axios.post("/auth/logout").then((response) => {
@@ -148,6 +145,17 @@ export default function DisplayLayout({ isProfile, tokenInfo }) {
         })
     }
 
+    function handleTagSelect(value) {
+        if (value === "Home") {
+            setTag(null)
+            navigate(`/`, { replace: true, state: { tag_id: value } })
+        }
+        else {
+            setTag(value)
+            navigate(`/tag/${value}`, { replace: true, state: { tag_id: value } })
+        }
+    }
+
     let body = (
         <>
             {isProfile ?
@@ -163,14 +171,8 @@ export default function DisplayLayout({ isProfile, tokenInfo }) {
                             defaultValue={category}
                             onChange={handleCategorySelect}
                             options={[
-                                {
-                                    value: 'My Posts',
-                                    label: 'My Posts',
-                                },
-                                {
-                                    value: 'My Comments',
-                                    label: 'My Comments',
-                                },
+                                { value: 'My Posts', label: 'My Posts' },
+                                { value: 'My Comments', label: 'My Comments' },
                             ]}
                         />
                     </div>
@@ -178,6 +180,18 @@ export default function DisplayLayout({ isProfile, tokenInfo }) {
                 : <>
                     <div className="center">
                         <h1>Welcome to Osusume!</h1>
+                    </div>
+                    <div className="top_profile">
+                        <div className="tag_title_wrapper">
+                            {tag &&
+                                <>
+                                    <div className="tag_pretitle">Tag: </div>
+                                    <div className="tag_title">{tag}</div>
+                                </>
+                            }
+                        </div>
+                        <Select className="tag" onSelect={handleTagSelect} placeholder="Tag" options={getTagList(tag != null)}
+                        />
                     </div>
                 </>
             }
