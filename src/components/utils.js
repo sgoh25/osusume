@@ -53,3 +53,18 @@ export function getMenuItems(items, navigate, removeToken) {
     }
     return menu
 }
+
+export function catchTimeout(error, navigate, removeToken) {
+    if (error.response) {
+        console.log(error.response.data.msg)
+        if (error.response.status === 401) {
+            removeToken()
+            navigate('/timeOut', { replace: true })
+        }
+    }
+}
+
+export function refreshToken(rsp, saveToken) {
+    console.log(rsp.msg);
+    rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration);
+}

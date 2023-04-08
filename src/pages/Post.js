@@ -4,6 +4,7 @@ import { MenuOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getMenuItems } from '../components/utils';
+import { catchTimeout, refreshToken } from '../components/utils';
 import '../styles/Post.css';
 import Layout from '../components/Layout.jsx';
 import SingleComment from '../components/SingleComment';
@@ -24,18 +25,9 @@ export default function Post({ token, saveToken, removeToken }) {
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            console.log(rsp.msg)
-            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+            refreshToken(rsp, saveToken)
             setPost(rsp)
-        }).catch(function (error) {
-            if (error.response) {
-                console.log(error.response.data.msg)
-                if (error.response.status === 401) {
-                    removeToken()
-                    navigate('/timeOut', { replace: true })
-                }
-            }
-        })
+        }).catch((error) => catchTimeout(error, navigate, removeToken))
 
         axios({
             method: "GET",
@@ -43,20 +35,11 @@ export default function Post({ token, saveToken, removeToken }) {
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            console.log(rsp.msg)
-            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+            refreshToken(rsp, saveToken)
             if (rsp.comments) {
                 setComments(rsp.comments);
             }
-        }).catch(function (error) {
-            if (error.response) {
-                console.log(error.response.data.msg)
-                if (error.response.status === 401) {
-                    removeToken()
-                    navigate('/timeOut', { replace: true })
-                }
-            }
-        })
+        }).catch((error) => catchTimeout(error, navigate, removeToken))
     }, []);
 
     function handleChange(event) {
@@ -75,9 +58,8 @@ export default function Post({ token, saveToken, removeToken }) {
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data
-            console.log(rsp.msg)
+            refreshToken(rsp, saveToken)
             setError(null)
-            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
             if (rsp.comments) {
                 setComments(rsp.comments);
             }

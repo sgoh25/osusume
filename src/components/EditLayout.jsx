@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Button, Select } from 'antd';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTagList } from './utils';
+import { catchTimeout, getTagList, refreshToken } from './utils';
 import '../styles/Login.css';
 import '../styles/Post.css';
 import Layout from './Layout.jsx';
@@ -26,18 +26,9 @@ export default function EditLayout({ post_id, tokenInfo }) {
                 headers: { Authorization: "Bearer " + token }
             }).then((response) => {
                 let rsp = response.data;
-                console.log(rsp.msg)
-                rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+                refreshToken(rsp, saveToken)
                 setPostForm({ title: rsp.title, description: rsp.description, tag: rsp.tag })
-            }).catch(function (error) {
-                if (error.response) {
-                    console.log(error.response.data.msg)
-                    if (error.response.status === 401) {
-                        removeToken()
-                        navigate('/timeOut', { replace: true })
-                    }
-                }
-            })
+            }).catch((error) => catchTimeout(error, navigate, removeToken))
         }
     }, []);
 
@@ -75,9 +66,8 @@ export default function EditLayout({ post_id, tokenInfo }) {
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data
-            console.log(rsp.msg)
+            refreshToken(rsp, saveToken)
             setError(null)
-            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
             navigate("/profile", { replace: true })
         }).catch(function (error) {
             if (error.response) {

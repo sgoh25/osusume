@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Button, Modal } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { catchTimeout, refreshToken } from './utils';
 import '../styles/Post.css';
 
 export default function SinglePostPreview({ postInfo, tokenInfo, isProfile }) {
@@ -20,19 +21,10 @@ export default function SinglePostPreview({ postInfo, tokenInfo, isProfile }) {
             headers: { Authorization: "Bearer " + tokenInfo.token }
         }).then((response) => {
             let rsp = response.data;
-            console.log(rsp.msg)
-            rsp.access_token && tokenInfo.saveToken(rsp.access_token, rsp.access_expiration)
+            refreshToken(rsp, tokenInfo.saveToken)
             isProfile && postInfo.setPosts(rsp.profile_posts)
             !isProfile && postInfo.setPosts(rsp.home_posts)
-        }).catch(function (error) {
-            if (error.response) {
-                console.log(error.response.data.msg)
-                if (error.response.status === 401) {
-                    tokenInfo.removeToken()
-                    navigate('/timeOut', { replace: true })
-                }
-            }
-        })
+        }).catch((error) => catchTimeout(error, navigate, tokenInfo.removeToken))
     };
     const handleCancel = () => {
         setIsModalOpen(false);

@@ -37,8 +37,8 @@ export default function LoginLayout({ isRegister, saveToken }) {
         }).then((response) => {
             let rsp = response.data
             console.log(rsp.msg)
-            setError(null)
             !isRegister && saveToken(rsp.access_token, rsp.access_expiration)
+            setError(null)
             navigate(redirect, { replace: true })
         }).catch(function (error) {
             if (error.response) {

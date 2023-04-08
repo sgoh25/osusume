@@ -3,6 +3,7 @@ import { Button, Modal } from 'antd';
 import { DislikeOutlined, LikeOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { catchTimeout, refreshToken } from './utils';
 import '../styles/Post.css';
 
 export default function SingleComment({ post_id, commentInfo, tokenInfo, isPreview }) {
@@ -20,21 +21,12 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            console.log(rsp.msg)
-            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+            refreshToken(rsp, saveToken)
             setCanVote(rsp.canVote)
             if (rsp.isUpvote != null) {
                 setIsUpvote(rsp.isUpvote)
             }
-        }).catch(function (error) {
-            if (error.response) {
-                console.log(error.response.data.msg)
-                if (error.response.status === 401) {
-                    removeToken()
-                    navigate('/timeOut', { replace: true })
-                }
-            }
-        })
+        }).catch((error) => catchTimeout(error, navigate, removeToken))
     }, []);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -56,18 +48,9 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            console.log(rsp.msg)
-            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+            refreshToken(rsp, saveToken)
             commentInfo.setComments(rsp.comments)
-        }).catch(function (error) {
-            if (error.response) {
-                console.log(error.response.data.msg)
-                if (error.response.status === 401) {
-                    removeToken()
-                    navigate('/timeOut', { replace: true })
-                }
-            }
-        })
+        }).catch((error) => catchTimeout(error, navigate, removeToken))
     };
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -81,8 +64,7 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            console.log(rsp.msg);
-            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration);
+            refreshToken(rsp, saveToken)
         }).catch(function (error) {
             if (error.response) {
                 if (!remove_vote) {
@@ -90,11 +72,7 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
                     setCanVote(true);
                     setIsUpvote(null);
                 }
-                console.log(error.response.data.msg)
-                if (error.response.status === 401) {
-                    removeToken();
-                    navigate('/timeOut', { replace: true });
-                }
+                catchTimeout(error, navigate, removeToken)
             }
         })
     }
@@ -113,19 +91,14 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
                 headers: { Authorization: "Bearer " + token }
             }).then((response) => {
                 let rsp = response.data;
-                console.log(rsp.msg);
-                rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration);
+                refreshToken(rsp, saveToken)
                 sendUpdate(is_upvote, remove_vote, success_score);
             }).catch(function (error) {
                 if (error.response) {
                     setScore(is_upvote ? score - 1 : score + 1);
                     setCanVote(false);
                     setIsUpvote(prev_vote);
-                    console.log(error.response.data.msg);
-                    if (error.response.status === 401) {
-                        removeToken()
-                        navigate('/timeOut', { replace: true })
-                    }
+                    catchTimeout(error, navigate, removeToken)
                 }
             })
         }

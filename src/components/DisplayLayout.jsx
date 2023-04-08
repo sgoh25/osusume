@@ -3,7 +3,7 @@ import { Button, Dropdown, Select } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTagList, getMenuItems } from './utils';
+import { catchTimeout, getTagList, getMenuItems, refreshToken } from './utils';
 import '../styles/Home.css';
 import '../styles/Post.css';
 import Layout from './Layout';
@@ -34,20 +34,11 @@ export default function DisplayLayout({ tag_id, isProfile, tokenInfo }) {
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            console.log(rsp.msg)
-            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+            refreshToken(rsp, saveToken)
             if (rsp.posts) {
                 setPosts(rsp.posts);
             }
-        }).catch(function (error) {
-            if (error.response) {
-                console.log(error.response.data.msg)
-                if (error.response.status === 401) {
-                    removeToken()
-                    navigate('/timeOut', { replace: true })
-                }
-            }
-        }).finally(function () {
+        }).catch((error) => catchTimeout(error, navigate, removeToken)).finally(function () {
             setPostsLoading(false);
         })
     }, [tag]);
@@ -109,23 +100,14 @@ export default function DisplayLayout({ tag_id, isProfile, tokenInfo }) {
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            console.log(rsp.msg)
-            rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration)
+            refreshToken(rsp, saveToken)
             if (rsp.posts) {
                 setPosts(rsp.posts);
             }
             if (rsp.comments) {
                 setComments(rsp.comments);
             }
-        }).catch(function (error) {
-            if (error.response) {
-                console.log(error.response.data.msg)
-                if (error.response.status === 401) {
-                    removeToken()
-                    navigate('/timeOut', { replace: true })
-                }
-            }
-        })
+        }).catch((error) => catchTimeout(error, navigate, removeToken))
     }
 
     function handleTagSelect(value) {
