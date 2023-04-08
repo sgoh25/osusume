@@ -19,7 +19,7 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
     const [category, setCategory] = useState("My Posts");
     const [tag, setTag] = useState(state.tag_id);
     const [pg, setPg] = useState(state.pg_num);
-    const [totalPosts, setTotalPosts] = useState(0);
+    const [totalRows, setTotalRows] = useState(0);
 
     useEffect(() => {
         setPostsLoading(true);
@@ -37,14 +37,13 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
         }).then((response) => {
             let rsp = response.data;
             refreshToken(rsp, saveToken)
-            if (rsp.posts) {
-                setPosts(rsp.posts);
-            }
-            rsp.total_posts && setTotalPosts(rsp.total_posts);
+            rsp.posts && setPosts(rsp.posts);
+            rsp.comments && setComments(rsp.comments);
+            rsp.total_rows && setTotalRows(rsp.total_rows);
         }).catch((error) => catchTimeout(error, navigate, removeToken)).finally(function () {
             setPostsLoading(false);
         })
-    }, [tag, pg]);
+    }, [tag, pg, totalRows]);
 
     let menuProps;
     if (isProfile) {
@@ -91,11 +90,13 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
         let url;
         if (value === "My Posts") {
             setCategory("My Posts");
-            url = "/post/profile/posts";
+            setPg(1);
+            url = `/post/profile/posts/${pg}`;
         }
         else {
             setCategory("My Comments");
-            url = "/post/profile/comments";
+            setPg(1);
+            url = `/post/profile/comments/${pg}`;
         }
         axios({
             method: "GET",
@@ -104,22 +105,21 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
         }).then((response) => {
             let rsp = response.data;
             refreshToken(rsp, saveToken)
-            if (rsp.posts) {
-                setPosts(rsp.posts);
-            }
-            if (rsp.comments) {
-                setComments(rsp.comments);
-            }
+            rsp.posts && setPosts(rsp.posts);
+            rsp.comments && setComments(rsp.comments);
+            rsp.total_rows && setTotalRows(rsp.total_rows);
         }).catch((error) => catchTimeout(error, navigate, removeToken))
     }
 
     function handleTagSelect(value) {
         if (value === "Home") {
             setTag(null);
+            setPg(1);
             navigate(`/`, { replace: true, state: { pg_num: 1, tag_id: value } });
         }
         else {
             setTag(value);
+            setPg(1);
             navigate(`/tag/${value}`, { replace: true, state: { pg_num: 1, tag_id: value } });
         }
     }
@@ -173,7 +173,8 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
             <div className="content">
                 {content}
             </div>
-            <Pagination className="pagination" current={pg} pageSize={5} total={totalPosts} onChange={handlePgChange} />
+            <Pagination className="pagination" current={pg} pageSize={localStorage.getItem("pg_size")}
+                total={totalRows} onChange={handlePgChange} />
         </>
     )
 

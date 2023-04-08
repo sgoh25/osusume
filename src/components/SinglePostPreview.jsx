@@ -22,8 +22,7 @@ export default function SinglePostPreview({ postInfo, tokenInfo, isProfile }) {
         }).then((response) => {
             let rsp = response.data;
             refreshToken(rsp, tokenInfo.saveToken)
-            isProfile && postInfo.setPosts(rsp.profile_posts)
-            !isProfile && postInfo.setPosts(rsp.home_posts)
+            isProfile && postInfo.setPosts(rsp.profile_posts);
         }).catch((error) => catchTimeout(error, navigate, tokenInfo.removeToken))
     };
     const handleCancel = () => {
@@ -33,7 +32,7 @@ export default function SinglePostPreview({ postInfo, tokenInfo, isProfile }) {
     return (
         <>
             <div className="preview_wrapper">
-                <div className="preview" onClick={() => navigate(`/post/${post.id}`, { replace: true, state: { post_id: post.id } })}>
+                <div className="preview" onClick={() => navigate(`/post/${post.id}`, { replace: true, state: { post_id: post.id, pg_num: 1 } })}>
                     <h2>{post.title}</h2>
                     <p>By: {post.author} - {post.created && post.created.slice(0, -7)}</p>
                 </div>

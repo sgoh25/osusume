@@ -15,6 +15,7 @@ import TimeOut from './pages/TimeOut';
 export default function App() {
     const { token, removeToken, saveToken } = useToken();
     let tokenInfo = { token: token, saveToken: saveToken, removeToken: removeToken }
+    localStorage.setItem("pg_size", 5);
 
     return (
         <div className="App">
@@ -22,6 +23,7 @@ export default function App() {
                 <Route exact path="/" element={<Home {...tokenInfo} />} />
                 <Route path="pg/:pg_num" element={<Home {...tokenInfo} />} />
                 <Route path="post/:post_id" element={<Post {...tokenInfo} />} />
+                <Route path="post/:post_id/pg/:pg_num" element={<Post {...tokenInfo} />} />
                 <Route path="tag/:tag_id" element={<Home {...tokenInfo} />} />
                 <Route path="tag/:tag_id/pg/:pg_num" element={<Home {...tokenInfo} />} />
                 {!token && token !== "" && token !== undefined ?

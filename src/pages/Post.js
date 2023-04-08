@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Button, Dropdown } from 'antd';
+import { Button, Dropdown, Pagination } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -12,11 +12,13 @@ import SingleComment from '../components/SingleComment';
 export default function Post({ token, saveToken, removeToken }) {
     const navigate = useNavigate();
     const { state } = useLocation();
-    const { post_id } = state;
-    let [error, setError] = useState(null)
-    let [post, setPost] = useState({})
-    let [comments, setComments] = useState([])
-    let [commentForm, setCommentForm] = useState({ comment: "" })
+    const { post_id, pg_num } = state;
+    let [error, setError] = useState(null);
+    let [post, setPost] = useState({});
+    let [comments, setComments] = useState([]);
+    let [commentForm, setCommentForm] = useState({ comment: "" });
+    let [pg, setPg] = useState(pg_num);
+    let [totalRows, setTotalRows] = useState(0);
 
     useEffect(() => {
         axios({
@@ -31,16 +33,15 @@ export default function Post({ token, saveToken, removeToken }) {
 
         axios({
             method: "GET",
-            url: `/post/${post_id}/comment`,
+            url: `/post/${post_id}/comment/${pg}`,
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
             refreshToken(rsp, saveToken)
-            if (rsp.comments) {
-                setComments(rsp.comments);
-            }
+            rsp.comments && setComments(rsp.comments);
+            rsp.total_rows && setTotalRows(rsp.total_rows);
         }).catch((error) => catchTimeout(error, navigate, removeToken))
-    }, []);
+    }, [pg, totalRows]);
 
     function handleChange(event) {
         const { value, name } = event.target
@@ -60,9 +61,8 @@ export default function Post({ token, saveToken, removeToken }) {
             let rsp = response.data
             refreshToken(rsp, saveToken)
             setError(null)
-            if (rsp.comments) {
-                setComments(rsp.comments);
-            }
+            rsp.comments && setComments(rsp.comments);
+            rsp.total_rows && setTotalRows(rsp.total_rows);
         }).catch(function (error) {
             if (error.response) {
                 console.log(error.response.data.msg)
@@ -71,6 +71,11 @@ export default function Post({ token, saveToken, removeToken }) {
         })
 
         setCommentForm(({ comment: "" }))
+    }
+
+    function handlePgChange(page) {
+        setPg(page);
+        navigate(`/post/${post_id}/pg/${page}`, { replace: true, state: { post_id: post_id, pg_num: page } });
     }
 
     let invalidToken = (!token && token !== "" && token !== undefined);
@@ -126,6 +131,8 @@ export default function Post({ token, saveToken, removeToken }) {
                 </div>
             }
             <>{comment_block}</>
+            <Pagination className="pagination" current={pg} pageSize={localStorage.getItem("pg_size")}
+                total={totalRows} onChange={handlePgChange} />
         </>
     )
 

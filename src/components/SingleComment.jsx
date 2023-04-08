@@ -16,12 +16,12 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
     useEffect(() => {
         axios({
             method: "GET",
-            url: `/post/${post_id}/comment/${comment.id}/getvote`,
+            url: `/post/${post_id}/comment/${comment.id}/vote`,
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            refreshToken(rsp, saveToken)
-            setCurrVote(rsp.voteScore)
+            refreshToken(rsp, saveToken);
+            setCurrVote(rsp.voteScore);
         }).catch((error) => catchTimeout(error, navigate, removeToken))
     }, []);
 
@@ -37,9 +37,10 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            refreshToken(rsp, saveToken)
-            isPreview && commentInfo.setComments(rsp.profile_comments)
-            !isPreview && commentInfo.setComments(rsp.post_comments)
+            refreshToken(rsp, saveToken);
+            setCurrVote(0);
+            isPreview && commentInfo.setComments(rsp.profile_comments);
+            !isPreview && commentInfo.setComments(rsp.post_comments);
         }).catch((error) => catchTimeout(error, navigate, removeToken))
     };
     const handleCancel = () => {
@@ -107,7 +108,7 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
         <>
             {isPreview ?
                 <div className="comment_preview_wrapper">
-                    <div className="comment_preview" onClick={() => navigate(`/post/${post_id}`, { replace: true, state: { post_id: post_id } })}>
+                    <div className="comment_preview" onClick={() => navigate(`/post/${post_id}`, { replace: true, state: { post_id: post_id, pg_num: 1 } })}>
                         <div className="comment_author">By: {comment.author} - {comment.created && comment.created.slice(0, -7)}</div>
                         <hr />
                         <div className="comment_body">{comment.comment}</div>
