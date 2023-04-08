@@ -11,8 +11,7 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
     let comment = commentInfo.comment
     let { token, saveToken, removeToken } = tokenInfo
     let [score, setScore] = useState(comment.score)
-    let [canVote, setCanVote] = useState(false)
-    let [isUpvote, setIsUpvote] = useState(null)
+    let [currVote, setCurrVote] = useState(0)
 
     useEffect(() => {
         axios({
@@ -22,10 +21,7 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
         }).then((response) => {
             let rsp = response.data;
             refreshToken(rsp, saveToken)
-            setCanVote(rsp.canVote)
-            if (rsp.isUpvote != null) {
-                setIsUpvote(rsp.isUpvote)
-            }
+            setCurrVote(rsp.voteScore)
         }).catch((error) => catchTimeout(error, navigate, removeToken))
     }, []);
 
@@ -35,84 +31,73 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
     };
     const handleOk = () => {
         setIsModalOpen(false);
-        let url;
-        if (isPreview) {
-            url = `/post/comment/${comment.id}`;
-        }
-        else {
-            url = `/post/${post_id}/comment/${comment.id}`;
-        }
         axios({
             method: "DELETE",
-            url: url,
+            url: `/post/${post_id}/comment/${comment.id}`,
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
             refreshToken(rsp, saveToken)
-            commentInfo.setComments(rsp.comments)
+            isPreview && commentInfo.setComments(rsp.profile_comments)
+            !isPreview && commentInfo.setComments(rsp.post_comments)
         }).catch((error) => catchTimeout(error, navigate, removeToken))
     };
     const handleCancel = () => {
         setIsModalOpen(false);
     };
 
-    function sendUpdate(is_upvote, remove_vote, success_score) {
+    function sendUpdate(success_score, next_vote, prev_vote) {
         axios({
             method: "POST",
             url: `/post/${post_id}/comment/${comment.id}/vote`,
-            data: { is_upvote: is_upvote, remove_vote: remove_vote, score: success_score },
+            data: { score: success_score, next_vote: next_vote, prev_vote: prev_vote },
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
             refreshToken(rsp, saveToken)
         }).catch(function (error) {
             if (error.response) {
-                if (!remove_vote) {
-                    setScore(is_upvote ? score - 1 : score + 1);
-                    setCanVote(true);
-                    setIsUpvote(null);
+                if (currVote + next_vote !== 0) {
+                    setScore((next_vote === 1) ? score - 1 : score + 1);
+                    setCurrVote(0);
                 }
                 catchTimeout(error, navigate, removeToken)
             }
         })
     }
 
-    function handleVote(is_upvote) {
-        let success_score = is_upvote ? score + 1 : score - 1;
-        let remove_vote = (isUpvote != null && is_upvote !== isUpvote);
-        if (remove_vote) {
-            let prev_vote = isUpvote;
+    function handleVote(next_vote) {
+        let success_score = (next_vote === 1) ? score + 1 : score - 1;
+        let prev_vote = currVote;
+        if (currVote + next_vote === 0) {
             setScore(success_score);
-            setCanVote(true);
-            setIsUpvote(null);
+            setCurrVote(0);
             axios({
                 method: "DELETE",
                 url: `/post/${post_id}/comment/${comment.id}/deletevote`,
                 headers: { Authorization: "Bearer " + token }
             }).then((response) => {
                 let rsp = response.data;
-                refreshToken(rsp, saveToken)
-                sendUpdate(is_upvote, remove_vote, success_score);
+                refreshToken(rsp, saveToken);
+                sendUpdate(success_score, next_vote, prev_vote);
             }).catch(function (error) {
                 if (error.response) {
-                    setScore(is_upvote ? score - 1 : score + 1);
-                    setCanVote(false);
-                    setIsUpvote(prev_vote);
-                    catchTimeout(error, navigate, removeToken)
+                    setScore((next_vote === 1) ? score - 1 : score + 1);
+                    setCurrVote(prev_vote);
+                    catchTimeout(error, navigate, removeToken);
                 }
             })
         }
         else {
             setScore(success_score);
-            setCanVote(false);
-            setIsUpvote(is_upvote);
-            sendUpdate(is_upvote, remove_vote, success_score);
+            setCurrVote(next_vote);
+            sendUpdate(success_score, next_vote, prev_vote);
         }
     }
 
     let invalidToken = (!token && token !== "" && token !== undefined);
     let score_class;
-    if (score == 0) {
+    if (score === 0) {
         score_class = "score";
     }
     else {
@@ -146,13 +131,13 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
                     <hr />
                     <div className="comment_body">{comment.comment}</div>
                     <div className="vote_wrapper">
-                        <Button className="vote_button" onClick={() => handleVote(false)}
-                            disabled={invalidToken || (!canVote && !isUpvote && isUpvote != null)}>
+                        <Button className="vote_button" onClick={() => handleVote(-1)}
+                            disabled={invalidToken || (currVote === -1)}>
                             <DislikeOutlined style={{ fontSize: '12px' }} />
                         </Button>
                         <div className={score_class}>{score}</div>
-                        <Button className="vote_button" onClick={() => handleVote(true)}
-                            disabled={invalidToken || (!canVote && isUpvote && isUpvote != null)}>
+                        <Button className="vote_button" onClick={() => handleVote(1)}
+                            disabled={invalidToken || (currVote === 1)}>
                             <LikeOutlined style={{ fontSize: '12px' }} />
                         </Button>
                     </div>

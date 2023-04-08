@@ -263,19 +263,11 @@ def delete_comment(post_id, comment_id):
     try:
         db.execute("DELETE from comment where id = ?", (comment_id,))
         db.commit()
-        return {"msg": "Post deleted", "comments": get_comments(post_id)["comments"]}
-    except Exception as e:
-        return {"msg", e}
-
-
-@bp.route("/comment/<int:comment_id>", methods=["DELETE"])
-@jwt_required()
-def delete_profile_comment(comment_id):
-    db = get_db()
-    try:
-        db.execute("DELETE from comment where id = ?", (comment_id,))
-        db.commit()
-        return {"msg": "Post deleted", "comments": get_profile_comments()["comments"]}
+        return {
+            "msg": "Post deleted",
+            "post_comments": get_comments(post_id)["comments"],
+            "profile_comments": get_profile_comments()["comments"],
+        }
     except Exception as e:
         return {"msg", e}
 
@@ -292,52 +284,40 @@ def get_vote(post_id, comment_id):
         )
         data = cursor.fetchone()
         columns = [desc[0] for desc in cursor.description]
-        response = {"canVote": not data, "isUpvote": None}
+        response = {"voteScore": 0}
         if data:
             row = parse_row(data, columns, user_id)
-            response["isUpvote"] = row["is_upvote"]
+            response["voteScore"] = row["score"]
         return response
     except Exception as e:
         return {"msg", e}
 
 
-@bp.route("/<int:post_id>/comment/<int:comment_id>/vote", methods=["POST", "DELETE"])
+@bp.route("/<int:post_id>/comment/<int:comment_id>/vote", methods=["POST"])
 @jwt_required()
 def do_vote(post_id, comment_id):
-    is_upvote = request.json.get("is_upvote", None)
-    remove_vote = request.json.get("remove_vote", None)
     score = request.json.get("score", None)
+    next_vote = request.json.get("next_vote", None)
+    prev_vote = request.json.get("prev_vote", None)
     author_id = get_user_id(get_jwt_identity())
     db = get_db()
-    if request.method == "POST":
-        try:
-            canVote = get_vote(post_id, comment_id)["canVote"]
-            if canVote:
-                if not remove_vote:
-                    db.execute(
-                        "INSERT INTO vote (post_id, comment_id, author_id, is_upvote) VALUES (?, ?, ?, ?)",
-                        (post_id, comment_id, author_id, is_upvote),
-                    )
+    try:
+        voteScore = get_vote(post_id, comment_id)["voteScore"]
+        if voteScore == 0:
+            if prev_vote + next_vote != 0:
                 db.execute(
-                    "UPDATE comment SET score = ? WHERE post_id = ? AND id = ?",
-                    (score, post_id, comment_id),
+                    "INSERT INTO vote (post_id, comment_id, author_id, score) VALUES (?, ?, ?, ?)",
+                    (post_id, comment_id, author_id, next_vote),
                 )
-                db.commit()
-                return {"msg": "Vote casted"}
-            return {"msg": "Already voted"}, 400
-        except Exception as e:
-            return {"msg", e}
-    elif request.method == "DELETE":
-        try:
-            print(post_id, comment_id, author_id, file=sys.stdout)
             db.execute(
-                "DELETE from vote where post_id = ? AND comment_id = ? AND author_id = ?",
-                (post_id, comment_id, author_id),
+                "UPDATE comment SET score = ? WHERE post_id = ? AND id = ?",
+                (score, post_id, comment_id),
             )
             db.commit()
-            return {"msg": "Vote deleted"}
-        except Exception as e:
-            return {"msg", e}
+            return {"msg": "Vote casted"}
+        return {"msg": "Already voted"}, 400
+    except Exception as e:
+        return {"msg", e}
 
 
 @bp.route("/<int:post_id>/comment/<int:comment_id>/deletevote", methods=["DELETE"])

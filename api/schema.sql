@@ -37,7 +37,7 @@ CREATE TABLE vote (
   post_id INTEGER NOT NULL,
   comment_id INTEGER NOT NULL,
   author_id INTEGER NOT NULL,
-  is_upvote BOOLEAN NOT NULL,
+  score INTEGER NOT NULL,
   FOREIGN KEY (author_id) REFERENCES user (id),
   FOREIGN KEY (post_id) REFERENCES post (id)
   FOREIGN KEY (comment_id) REFERENCES post (id)

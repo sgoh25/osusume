@@ -42,7 +42,7 @@ input[type=password] {
 }
 
 .error {
-    margin: 2% 10%;
+    margin: 1px 10%;
     font-size: 15px;
     color: crimson;
 }
