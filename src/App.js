@@ -23,6 +23,7 @@ export default function App() {
                 <Route path="pg/:pg_num" element={<Home {...tokenInfo} />} />
                 <Route path="post/:post_id" element={<Post {...tokenInfo} />} />
                 <Route path="tag/:tag_id" element={<Home {...tokenInfo} />} />
+                <Route path="tag/:tag_id/pg/:pg_num" element={<Home {...tokenInfo} />} />
                 {!token && token !== "" && token !== undefined ?
                     <>
                         <Route path="login" element={<Login saveToken={saveToken} />} />
@@ -30,6 +31,7 @@ export default function App() {
                     </>
                     : <>
                         <Route path="profile" element={<Profile {...tokenInfo} />} />
+                        <Route path="profile/pg/:pg_num" element={<Profile {...tokenInfo} />} />
                         <Route path="profile/create" element={<Create {...tokenInfo} />} />
                         <Route path="profile/update" element={<Update {...tokenInfo} />} />
                     </>

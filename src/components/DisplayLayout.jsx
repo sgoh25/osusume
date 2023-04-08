@@ -25,10 +25,10 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
         setPostsLoading(true);
         let url;
         if (isProfile) {
-            url = (category === "My Posts") ? "/post/profile/posts" : "/post/profile/comments";
+            url = (category === "My Posts") ? `/post/profile/posts/${pg}` : `/post/profile/comments/${pg}`;
         }
         else {
-            url = tag ? `/post/home/${tag}` : `/post/home/${pg}`;
+            url = tag ? `/post/home/${tag}/${pg}` : `/post/home/${pg}`;
         }
         axios({
             method: "GET",
@@ -116,17 +116,19 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
     function handleTagSelect(value) {
         if (value === "Home") {
             setTag(null);
-            navigate(`/`, { replace: true, state: { tag_id: value } });
+            navigate(`/`, { replace: true, state: { pg_num: 1, tag_id: value } });
         }
         else {
             setTag(value);
-            navigate(`/tag/${value}`, { replace: true, state: { tag_id: value } });
+            navigate(`/tag/${value}`, { replace: true, state: { pg_num: 1, tag_id: value } });
         }
     }
 
     function handlePgChange(page) {
         setPg(page);
-        !isProfile && navigate(`/pg/${page}`, { replace: true, state: { pg_num: page, tag_id: tag } });
+        !isProfile && tag == null && navigate(`/pg/${page}`, { replace: true, state: { pg_num: page, tag_id: tag } });
+        !isProfile && tag != null && navigate(`/tag/${tag}/pg/${page}`, { replace: true, state: { pg_num: page, tag_id: tag } });
+        isProfile && navigate(`/profile/pg/${page}`, { replace: true, state: { pg_num: page, tag_id: tag } });
     }
 
     let body = (

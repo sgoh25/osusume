@@ -74,7 +74,7 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
             setCurrVote(0);
             axios({
                 method: "DELETE",
-                url: `/post/${post_id}/comment/${comment.id}/deletevote`,
+                url: `/post/${post_id}/comment/${comment.id}/vote`,
                 headers: { Authorization: "Bearer " + token }
             }).then((response) => {
                 let rsp = response.data;
