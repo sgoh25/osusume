@@ -59,7 +59,7 @@ body {
     border-color: rgb(88, 145, 179);
     margin-left: 5%;
     margin-right: 5%;
-    padding-bottom: 4%;
+    padding-bottom: 1px;
 }
 
 .main {
@@ -156,6 +156,11 @@ body {
     font-weight: bold;
     margin-top: 5%;
     margin-bottom: 3%;
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 30px;
 }
 
 @media (max-width: 720px) {

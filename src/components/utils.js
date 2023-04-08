@@ -68,3 +68,16 @@ export function refreshToken(rsp, saveToken) {
     console.log(rsp.msg);
     rsp.access_token && saveToken(rsp.access_token, rsp.access_expiration);
 }
+
+export function ensureValidState(state) {
+    if (!state) {
+        return { pg_num: 1, tag_id: null }
+    }
+    if (!("pg_num" in state)) {
+        state["pg_num"] = 1;
+    }
+    if (!("tag_id" in state)) {
+        state["tag_id"] = null;
+    }
+    return state
+}

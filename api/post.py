@@ -1,4 +1,5 @@
 import json
+import math
 import sys
 
 from datetime import datetime, timedelta, timezone
@@ -66,13 +67,18 @@ def parse_row_data(data, columns, user_id, isComment=False):
     return {key: posts}
 
 
-@bp.route("/home", methods=["GET"])
-def get_home_posts():
+@bp.route("/home/<int:pg_num>", methods=["GET"])
+def get_home_posts(pg_num):
     db = get_db()
-    cursor = db.execute("SELECT * FROM post ORDER BY created DESC")
-    data = cursor.fetchmany(10)
+    offset = (pg_num - 1) * 5
+    cursor = db.execute(
+        "SELECT * FROM post ORDER BY created DESC LIMIT 5 OFFSET ?", (offset,)
+    )
+    data = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
-    return parse_row_data(data, columns, None)
+    response = parse_row_data(data, columns, None)
+    response["total_posts"] = db.execute("SELECT COUNT(*) FROM post").fetchone()[0]
+    return response
 
 
 @bp.route("/home/<tag_id>", methods=["GET"])

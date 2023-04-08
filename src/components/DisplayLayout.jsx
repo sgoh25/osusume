@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Button, Dropdown, Select } from 'antd';
+import { Button, Dropdown, Pagination, Select } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -10,14 +10,16 @@ import Layout from './Layout';
 import SinglePostPreview from './SinglePostPreview.jsx';
 import SingleComment from './SingleComment';
 
-export default function DisplayLayout({ tag_id, isProfile, tokenInfo }) {
+export default function DisplayLayout({ state, isProfile, tokenInfo }) {
     const navigate = useNavigate();
     let { token, saveToken, removeToken } = tokenInfo;
     const [posts, setPosts] = useState([]);
     const [comments, setComments] = useState([]);
     const [postsLoading, setPostsLoading] = useState(false);
     const [category, setCategory] = useState("My Posts");
-    const [tag, setTag] = useState(tag_id)
+    const [tag, setTag] = useState(state.tag_id);
+    const [pg, setPg] = useState(state.pg_num);
+    const [totalPosts, setTotalPosts] = useState(0);
 
     useEffect(() => {
         setPostsLoading(true);
@@ -26,7 +28,7 @@ export default function DisplayLayout({ tag_id, isProfile, tokenInfo }) {
             url = (category === "My Posts") ? "/post/profile/posts" : "/post/profile/comments";
         }
         else {
-            url = tag ? `/post/home/${tag}` : "/post/home";
+            url = tag ? `/post/home/${tag}` : `/post/home/${pg}`;
         }
         axios({
             method: "GET",
@@ -38,10 +40,11 @@ export default function DisplayLayout({ tag_id, isProfile, tokenInfo }) {
             if (rsp.posts) {
                 setPosts(rsp.posts);
             }
+            rsp.total_posts && setTotalPosts(rsp.total_posts);
         }).catch((error) => catchTimeout(error, navigate, removeToken)).finally(function () {
             setPostsLoading(false);
         })
-    }, [tag]);
+    }, [tag, pg]);
 
     let menuProps;
     if (isProfile) {
@@ -70,7 +73,7 @@ export default function DisplayLayout({ tag_id, isProfile, tokenInfo }) {
 
     let content = (
         <>
-            {postsLoading && <div className="loading">Loading...</div>}
+            {isProfile && postsLoading && <div className="loading">Loading...</div>}
             {
                 category === "My Posts" && posts && posts.length !== 0 &&
                 posts.map((post, idx) => <SinglePostPreview postInfo={{ post, setPosts }}
@@ -112,13 +115,18 @@ export default function DisplayLayout({ tag_id, isProfile, tokenInfo }) {
 
     function handleTagSelect(value) {
         if (value === "Home") {
-            setTag(null)
-            navigate(`/`, { replace: true, state: { tag_id: value } })
+            setTag(null);
+            navigate(`/`, { replace: true, state: { tag_id: value } });
         }
         else {
-            setTag(value)
-            navigate(`/tag/${value}`, { replace: true, state: { tag_id: value } })
+            setTag(value);
+            navigate(`/tag/${value}`, { replace: true, state: { tag_id: value } });
         }
+    }
+
+    function handlePgChange(page) {
+        setPg(page);
+        !isProfile && navigate(`/pg/${page}`, { replace: true, state: { pg_num: page, tag_id: tag } });
     }
 
     let body = (
@@ -163,6 +171,7 @@ export default function DisplayLayout({ tag_id, isProfile, tokenInfo }) {
             <div className="content">
                 {content}
             </div>
+            <Pagination className="pagination" current={pg} pageSize={5} total={totalPosts} onChange={handlePgChange} />
         </>
     )
 
