@@ -10,7 +10,7 @@ from api import post
 
 
 def create_app():
-    api = Flask(__name__)
+    api = Flask(__name__, static_folder='./build', static_url_path='/')
     api.config.from_mapping(
         JWT_SECRET_KEY="dev",  # TBD!!
         DATABASE=os.path.join(api.instance_path, "database.sqlite"),
@@ -23,6 +23,10 @@ def create_app():
         os.makedirs(api.instance_path)
     except OSError:
         pass
+
+    @api.route('/')
+    def index():
+        return api.send_static_file('index.html')
 
     # Initialize database clean up handler
     db.init_api(api)
