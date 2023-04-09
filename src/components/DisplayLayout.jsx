@@ -1,11 +1,12 @@
 import axios from 'axios';
-import { Button, Dropdown, Pagination, Select } from 'antd';
+import { Button, Dropdown, Modal, Pagination, Select } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { catchTimeout, getTagList, getMenuItems, refreshToken } from './utils';
+import { catchTimeout, getMenuItems, getTagList, handleLogout, refreshToken } from './utils';
 import '../styles/Home.css';
 import '../styles/Post.css';
+import '../styles/Settings.css';
 import Layout from './Layout';
 import SinglePostPreview from './SinglePostPreview.jsx';
 import SingleComment from './SingleComment';
@@ -19,6 +20,13 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
     const [tag, setTag] = useState(state.tag_id);
     const [pg, setPg] = useState(state.pg_num);
     const [totalRows, setTotalRows] = useState(0);
+    const [username, setUsername] = useState("");
+    const [passwordForm, setPasswordForm] = useState({
+        curr_password: "",
+        new_password: ""
+    });
+    const [passMsg, setPassMsg] = useState(null);
+    const [passError, setPassError] = useState(null);
 
     useEffect(() => {
         let url;
@@ -46,6 +54,42 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
             }
         }).catch((error) => catchTimeout(error, navigate, removeToken))
     }, [tag, pg, totalRows]);
+
+    function handleChange(event) {
+        const { value, name } = event.target;
+        setPasswordForm(prevNote => ({
+            ...prevNote, [name]: value
+        })
+        );
+    }
+
+    function handleSubmit() {
+        axios({
+            method: "POST",
+            url: '/auth/settings',
+            data: {
+                curr_password: passwordForm.curr_password,
+                new_password: passwordForm.new_password
+            },
+            headers: { Authorization: "Bearer " + token }
+        }).then((response) => {
+            let rsp = response.data;
+            refreshToken(rsp, saveToken);
+            setPassMsg(rsp.msg);
+            setPassError(null);
+        }).catch(function (error) {
+            if (error.response) {
+                console.log(error.response.data.msg);
+                setPassError(error.response.data.msg);
+                setPassMsg(null);
+            }
+        })
+
+        setPasswordForm(({
+            curr_password: "",
+            new_password: ""
+        }));
+    }
 
     let menuProps;
     if (isProfile) {
@@ -91,14 +135,23 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
         let url;
         if (value === "My Posts") {
             setCategory("My Posts");
-            setPg(1);
             url = `/post/profile/posts/${pg}`;
         }
-        else {
+        else if (value === "My Comments") {
             setCategory("My Comments");
-            setPg(1);
             url = `/post/profile/comments/${pg}`;
         }
+        else {
+            setCategory("Settings");
+            url = `/auth/settings`;
+        }
+        setPg(1);
+        setPassMsg(null);
+        setPassError(null);
+        setPasswordForm(({
+            curr_password: "",
+            new_password: ""
+        }));
         axios({
             method: "GET",
             url: url,
@@ -109,6 +162,7 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
             rsp.posts && setPosts(rsp.posts);
             rsp.comments && setComments(rsp.comments);
             rsp.total_rows && setTotalRows(rsp.total_rows);
+            rsp.username && setUsername(rsp.username);
         }).catch((error) => catchTimeout(error, navigate, removeToken))
     }
 
@@ -132,6 +186,24 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
         isProfile && navigate(`/profile/pg/${page}`, { replace: true, state: { pg_num: page, tag_id: tag } });
     }
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleOk = () => {
+        setIsModalOpen(false);
+        axios({
+            method: "DELETE",
+            url: '/auth/settings',
+            headers: { Authorization: "Bearer " + token }
+        }).then(() => {
+            handleLogout(navigate, removeToken);
+        }).catch((error) => catchTimeout(error, navigate, removeToken))
+    };
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
     let body = (
         <>
             {isProfile ?
@@ -149,6 +221,7 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
                             options={[
                                 { value: 'My Posts', label: 'My Posts' },
                                 { value: 'My Comments', label: 'My Comments' },
+                                { value: 'Settings', label: 'Settings' },
                             ]}
                         />
                     </div>
@@ -171,11 +244,40 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
                     </div>
                 </>
             }
-            <div className="content">
-                {content}
-            </div>
-            <Pagination className="pagination" current={pg} pageSize={localStorage.getItem("pg_size")}
-                total={totalRows} onChange={handlePgChange} />
+            {category !== "Settings" ?
+                <>
+                    <div className="content">
+                        {content}
+                    </div>
+                    <Pagination className="pagination" current={pg} pageSize={localStorage.getItem("pg_size")}
+                        total={totalRows} onChange={handlePgChange} />
+                </>
+                : <>
+                    <div className="settings_wrapper">
+                        <form>
+                            <div className="settings_label">Username:</div>
+                            <input type="text" name="username" text={username} value={username} disabled></input>
+                            <div className="settings_label">Current Password:</div>
+                            <input type="password" onChange={handleChange} placeholder="Current Password"
+                                name="curr_password" text={passwordForm.curr_password} value={passwordForm.curr_password}></input>
+                            <div className="settings_label">New Password:</div>
+                            <input type="password" onChange={handleChange} placeholder="New Password"
+                                name="new_password" text={passwordForm.new_password} value={passwordForm.new_password}></input>
+                            {passError != null && <div className="error">{passError}</div>}
+                            {passMsg != null && <div className="msg">{passMsg}</div>}
+                            <div className="settings_button">
+                                <Button className="button" type="primary" onClick={handleSubmit}>Update Password</Button>
+                            </div>
+                            <div className="delete_button">
+                                <Button className="button" type="primary" onClick={showModal} danger>Delete Account</Button>
+                            </div>
+                            <Modal title="Delete Confirmation" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                                <p>Are you sure you want to delete your account?</p>
+                            </Modal>
+                        </form>
+                    </div>
+                </>
+            }
         </>
     )
 

@@ -1,0 +1,27 @@
+.settings_wrapper {
+    display: block;
+    margin-left: -10px;
+    max-width: 500px;
+}
+
+.settings_label {
+    margin: 5px 10%;
+    font-size: 15px;
+}
+
+.settings_button {
+    display: block;
+    margin: 5px 10%;
+}
+
+.delete_button {
+    display: block;
+    margin: 5px 10%;
+    margin-top: 30px;
+}
+
+.msg {
+    margin: 1px 10%;
+    font-size: 15px;
+    color: rgba(34, 136, 17, 0.884);
+}
