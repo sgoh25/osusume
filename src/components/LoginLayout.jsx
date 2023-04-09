@@ -7,18 +7,18 @@ import Layout from './Layout.jsx';
 
 export default function LoginLayout({ isRegister, saveToken }) {
     const navigate = useNavigate();
-    let [error, setError] = useState(null)
+    let [error, setError] = useState(null);
     const [loginForm, setLoginForm] = useState({
         username: "",
         password: ""
-    })
+    });
 
     function handleChange(event) {
-        const { value, name } = event.target
+        const { value, name } = event.target;
         setLoginForm(prevNote => ({
             ...prevNote, [name]: value
         })
-        )
+        );
     }
 
     function handleSubmit(isRegister) {
@@ -35,22 +35,22 @@ export default function LoginLayout({ isRegister, saveToken }) {
             username: loginForm.username,
             password: loginForm.password
         }).then((response) => {
-            let rsp = response.data
-            console.log(rsp.msg)
-            !isRegister && saveToken(rsp.access_token, rsp.access_expiration)
-            setError(null)
-            navigate(redirect, { replace: true })
+            let rsp = response.data;
+            console.log(rsp.msg);
+            !isRegister && saveToken(rsp.access_token, rsp.access_expiration);
+            setError(null);
+            navigate(redirect, { replace: true });
         }).catch(function (error) {
             if (error.response) {
-                console.log(error.response.data.msg)
-                setError(error.response.data.msg)
+                console.log(error.response.data.msg);
+                setError(error.response.data.msg);
             }
         })
 
         setLoginForm(({
             username: "",
             password: ""
-        }))
+        }));
     }
 
     let body = (

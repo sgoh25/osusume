@@ -166,6 +166,7 @@ def update_post(post_id):
             return {"msg": "Post updated"}
     return {"msg": error}
 
+
 @bp.route("/<int:post_id>/<int:pg_num>", methods=["DELETE"])
 @jwt_required()
 def delete_post(post_id, pg_num):

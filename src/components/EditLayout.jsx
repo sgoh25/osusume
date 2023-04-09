@@ -11,12 +11,12 @@ export default function EditLayout({ post_id, tokenInfo }) {
     const navigate = useNavigate();
     let { token, saveToken, removeToken } = tokenInfo;
     let isCreate = (post_id == null);
-    let [error, setError] = useState(null)
-    let [postForm, setPostForm] = useState({
+    const [error, setError] = useState(null);
+    const [postForm, setPostForm] = useState({
         title: "",
         description: "",
         tag: ""
-    })
+    });
 
     useEffect(() => {
         if (!isCreate) {
@@ -33,18 +33,18 @@ export default function EditLayout({ post_id, tokenInfo }) {
     }, []);
 
     function handleChange(event) {
-        const { value, name } = event.target
+        const { value, name } = event.target;
         setPostForm(prevNote => ({
             ...prevNote, [name]: value
         })
-        )
+        );
     }
 
     function handleSelect(value) {
         setPostForm(prevNote => ({
             ...prevNote, tag: value
         })
-        )
+        );
     }
 
     function handleSubmit(isCreate) {
@@ -65,14 +65,14 @@ export default function EditLayout({ post_id, tokenInfo }) {
             },
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
-            let rsp = response.data
-            refreshToken(rsp, saveToken)
-            setError(null)
-            navigate("/profile", { replace: true })
+            let rsp = response.data;
+            refreshToken(rsp, saveToken);
+            setError(null);
+            navigate("/profile", { replace: true });
         }).catch(function (error) {
             if (error.response) {
-                console.log(error.response.data.msg)
-                setError(error.response.data.msg)
+                console.log(error.response.data.msg);
+                setError(error.response.data.msg);
             }
         })
 
@@ -80,7 +80,7 @@ export default function EditLayout({ post_id, tokenInfo }) {
             title: "",
             description: "",
             tag: ""
-        }))
+        }));
     }
 
     let body = (

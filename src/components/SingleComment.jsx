@@ -10,8 +10,8 @@ export default function SingleComment({ post_id, commentInfo, pgInfo, tokenInfo,
     const navigate = useNavigate();
     let comment = commentInfo.comment;
     let { token, saveToken, removeToken } = tokenInfo;
-    let [score, setScore] = useState(comment.score);
-    let [currVote, setCurrVote] = useState(0);
+    const [score, setScore] = useState(comment.score);
+    const [currVote, setCurrVote] = useState(0);
 
     useEffect(() => {
         axios({
@@ -56,14 +56,14 @@ export default function SingleComment({ post_id, commentInfo, pgInfo, tokenInfo,
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            refreshToken(rsp, saveToken)
+            refreshToken(rsp, saveToken);
         }).catch(function (error) {
             if (error.response) {
                 if (currVote + next_vote !== 0) {
                     setScore((next_vote === 1) ? score - 1 : score + 1);
                     setCurrVote(0);
                 }
-                catchTimeout(error, navigate, removeToken)
+                catchTimeout(error, navigate, removeToken);
             }
         })
     }

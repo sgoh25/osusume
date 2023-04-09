@@ -7,7 +7,7 @@ import '../styles/Post.css';
 
 export default function SinglePostPreview({ postInfo, pgInfo, tokenInfo, isProfile }) {
     const navigate = useNavigate();
-    let post = postInfo.post
+    let post = postInfo.post;
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const showModal = () => {

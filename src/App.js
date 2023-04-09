@@ -14,7 +14,7 @@ import TimeOut from './pages/TimeOut';
 
 export default function App() {
     const { token, removeToken, saveToken } = useToken();
-    let tokenInfo = { token: token, saveToken: saveToken, removeToken: removeToken }
+    let tokenInfo = { token: token, saveToken: saveToken, removeToken: removeToken };
     localStorage.setItem("pg_size", 5);
 
     return (

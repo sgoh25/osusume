@@ -15,14 +15,12 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
     let { token, saveToken, removeToken } = tokenInfo;
     const [posts, setPosts] = useState([]);
     const [comments, setComments] = useState([]);
-    const [postsLoading, setPostsLoading] = useState(false);
     const [category, setCategory] = useState("My Posts");
     const [tag, setTag] = useState(state.tag_id);
     const [pg, setPg] = useState(state.pg_num);
     const [totalRows, setTotalRows] = useState(0);
 
     useEffect(() => {
-        setPostsLoading(true);
         let url;
         if (isProfile) {
             url = (category === "My Posts") ? `/post/profile/posts/${pg}` : `/post/profile/comments/${pg}`;
@@ -36,7 +34,7 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            refreshToken(rsp, saveToken)
+            refreshToken(rsp, saveToken);
             rsp.posts && setPosts(rsp.posts);
             rsp.comments && setComments(rsp.comments);
             rsp.total_rows && setTotalRows(rsp.total_rows);
@@ -46,9 +44,7 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
             )) {
                 handlePgChange(1);
             }
-        }).catch((error) => catchTimeout(error, navigate, removeToken)).finally(function () {
-            setPostsLoading(false);
-        })
+        }).catch((error) => catchTimeout(error, navigate, removeToken))
     }, [tag, pg, totalRows]);
 
     let menuProps;
@@ -78,7 +74,6 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
 
     let content = (
         <>
-            {isProfile && postsLoading && <div className="loading">Loading...</div>}
             {
                 category === "My Posts" && posts && posts.length !== 0 &&
                 posts.map((post, idx) => <SinglePostPreview postInfo={{ post, setPosts }} pgInfo={{ pg, setPg, setTotalRows }}
@@ -110,7 +105,7 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            refreshToken(rsp, saveToken)
+            refreshToken(rsp, saveToken);
             rsp.posts && setPosts(rsp.posts);
             rsp.comments && setComments(rsp.comments);
             rsp.total_rows && setTotalRows(rsp.total_rows);

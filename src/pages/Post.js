@@ -13,12 +13,12 @@ export default function Post({ token, saveToken, removeToken }) {
     const navigate = useNavigate();
     const { state } = useLocation();
     const { post_id, pg_num } = state;
-    let [error, setError] = useState(null);
-    let [post, setPost] = useState({});
-    let [comments, setComments] = useState([]);
-    let [commentForm, setCommentForm] = useState({ comment: "" });
-    let [pg, setPg] = useState(pg_num);
-    let [totalRows, setTotalRows] = useState(0);
+    const [error, setError] = useState(null);
+    const [post, setPost] = useState({});
+    const [comments, setComments] = useState([]);
+    const [commentForm, setCommentForm] = useState({ comment: "" });
+    const [pg, setPg] = useState(pg_num);
+    const [totalRows, setTotalRows] = useState(0);
 
     useEffect(() => {
         axios({
@@ -27,8 +27,8 @@ export default function Post({ token, saveToken, removeToken }) {
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            refreshToken(rsp, saveToken)
-            setPost(rsp)
+            refreshToken(rsp, saveToken);
+            setPost(rsp);
         }).catch((error) => catchTimeout(error, navigate, removeToken))
 
         axios({
@@ -37,7 +37,7 @@ export default function Post({ token, saveToken, removeToken }) {
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
-            refreshToken(rsp, saveToken)
+            refreshToken(rsp, saveToken);
             rsp.comments && setComments(rsp.comments);
             rsp.total_rows && setTotalRows(rsp.total_rows);
             if (totalRows && (rsp.comments && comments.length === 0)) {
@@ -47,11 +47,11 @@ export default function Post({ token, saveToken, removeToken }) {
     }, [pg, totalRows]);
 
     function handleChange(event) {
-        const { value, name } = event.target
+        const { value, name } = event.target;
         setCommentForm(prevNote => ({
             ...prevNote, [name]: value
         })
-        )
+        );
     }
 
     function handleSubmit() {
@@ -61,19 +61,19 @@ export default function Post({ token, saveToken, removeToken }) {
             data: { comment: commentForm.comment },
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
-            let rsp = response.data
-            refreshToken(rsp, saveToken)
-            setError(null)
+            let rsp = response.data;
+            refreshToken(rsp, saveToken);
+            setError(null);
             rsp.comments && setComments(rsp.comments);
             rsp.total_rows && setTotalRows(rsp.total_rows);
         }).catch(function (error) {
             if (error.response) {
-                console.log(error.response.data.msg)
-                setError(error.response.data.msg)
+                console.log(error.response.data.msg);
+                setError(error.response.data.msg);
             }
         })
 
-        setCommentForm(({ comment: "" }))
+        setCommentForm(({ comment: "" }));
     }
 
     function handlePgChange(page) {
