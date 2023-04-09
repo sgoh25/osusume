@@ -144,10 +144,10 @@ def get_post(post_id):
 @bp.route("/<int:post_id>", methods=["POST"])
 @jwt_required()
 def update_post(post_id):
-    db = get_db()
     title = request.json.get("title", None)
     description = request.json.get("description", None)
     tag = request.json.get("tag", None)
+    db = get_db()
     error = None
 
     if not title:

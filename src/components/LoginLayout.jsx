@@ -31,9 +31,13 @@ export default function LoginLayout({ isRegister, saveToken }) {
             url = "/auth/login";
             redirect = "/";
         }
-        axios.post(url, {
-            username: loginForm.username,
-            password: loginForm.password
+        axios({
+            method: "POST",
+            url: url,
+            data: {
+                username: loginForm.username,
+                password: loginForm.password
+            }
         }).then((response) => {
             let rsp = response.data;
             console.log(rsp.msg);

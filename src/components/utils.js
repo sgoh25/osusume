@@ -17,7 +17,7 @@ export function getTagList(showHome) {
 }
 
 export function handleLogout(navigate, removeToken) {
-    axios.post("/auth/logout").then((response) => {
+    axios({ method: "POST", url: "/auth/logout" }).then((response) => {
         console.log(response.data.msg)
         removeToken()
         navigate("/", { replace: true })
