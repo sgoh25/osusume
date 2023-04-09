@@ -40,6 +40,9 @@ export default function Post({ token, saveToken, removeToken }) {
             refreshToken(rsp, saveToken)
             rsp.comments && setComments(rsp.comments);
             rsp.total_rows && setTotalRows(rsp.total_rows);
+            if (totalRows && (rsp.comments && comments.length === 0)) {
+                handlePgChange(1);
+            }
         }).catch((error) => catchTimeout(error, navigate, removeToken))
     }, [pg, totalRows]);
 
@@ -102,7 +105,7 @@ export default function Post({ token, saveToken, removeToken }) {
             {
                 comments && comments.length !== 0 &&
                 comments.map((comment, idx) => <SingleComment post_id={post_id} commentInfo={{ comment, setComments }}
-                    tokenInfo={{ token, saveToken, removeToken }} isPreview={false} key={`${comment}${idx}`} />)
+                    pgInfo={{ pg, setPg, setTotalRows }} tokenInfo={{ token, saveToken, removeToken }} isPreview={false} key={`${comment}${idx}`} />)
             }
         </>
     )

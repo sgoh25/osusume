@@ -40,6 +40,12 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
             rsp.posts && setPosts(rsp.posts);
             rsp.comments && setComments(rsp.comments);
             rsp.total_rows && setTotalRows(rsp.total_rows);
+            if (totalRows && (
+                (rsp.posts && category === "My Posts" && posts.length === 0)
+                || (rsp.comments && category === "My Comments" && comments.length === 0)
+            )) {
+                handlePgChange(1);
+            }
         }).catch((error) => catchTimeout(error, navigate, removeToken)).finally(function () {
             setPostsLoading(false);
         })
@@ -75,13 +81,13 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
             {isProfile && postsLoading && <div className="loading">Loading...</div>}
             {
                 category === "My Posts" && posts && posts.length !== 0 &&
-                posts.map((post, idx) => <SinglePostPreview postInfo={{ post, setPosts }}
+                posts.map((post, idx) => <SinglePostPreview postInfo={{ post, setPosts }} pgInfo={{ pg, setPg, setTotalRows }}
                     tokenInfo={{ token, saveToken, removeToken }} isProfile={isProfile} key={`${post}${idx}`} />)
             }
             {
                 category === "My Comments" && comments && comments.length !== 0 &&
                 comments.map((comment, idx) => <SingleComment post_id={comment.post_id} commentInfo={{ comment, setComments }}
-                    tokenInfo={{ token, saveToken, removeToken }} isPreview={true} key={`${comment}${idx}`} />)
+                    pgInfo={{ pg, setPg, setTotalRows }} tokenInfo={{ token, saveToken, removeToken }} isPreview={true} key={`${comment}${idx}`} />)
             }
         </>
     )

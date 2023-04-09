@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { catchTimeout, refreshToken } from './utils';
 import '../styles/Post.css';
 
-export default function SinglePostPreview({ postInfo, tokenInfo, isProfile }) {
+export default function SinglePostPreview({ postInfo, pgInfo, tokenInfo, isProfile }) {
     const navigate = useNavigate();
     let post = postInfo.post
 
@@ -17,11 +17,12 @@ export default function SinglePostPreview({ postInfo, tokenInfo, isProfile }) {
         setIsModalOpen(false);
         axios({
             method: "DELETE",
-            url: `/post/${post.id}`,
+            url: `/post/${post.id}/${pgInfo.pg}`,
             headers: { Authorization: "Bearer " + tokenInfo.token }
         }).then((response) => {
             let rsp = response.data;
-            refreshToken(rsp, tokenInfo.saveToken)
+            refreshToken(rsp, tokenInfo.saveToken);
+            pgInfo.setTotalRows(rsp.total_rows);
             isProfile && postInfo.setPosts(rsp.profile_posts);
         }).catch((error) => catchTimeout(error, navigate, tokenInfo.removeToken))
     };

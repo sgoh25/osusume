@@ -6,12 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import { catchTimeout, refreshToken } from './utils';
 import '../styles/Post.css';
 
-export default function SingleComment({ post_id, commentInfo, tokenInfo, isPreview }) {
+export default function SingleComment({ post_id, commentInfo, pgInfo, tokenInfo, isPreview }) {
     const navigate = useNavigate();
-    let comment = commentInfo.comment
-    let { token, saveToken, removeToken } = tokenInfo
-    let [score, setScore] = useState(comment.score)
-    let [currVote, setCurrVote] = useState(0)
+    let comment = commentInfo.comment;
+    let { token, saveToken, removeToken } = tokenInfo;
+    let [score, setScore] = useState(comment.score);
+    let [currVote, setCurrVote] = useState(0);
 
     useEffect(() => {
         axios({
@@ -33,12 +33,13 @@ export default function SingleComment({ post_id, commentInfo, tokenInfo, isPrevi
         setIsModalOpen(false);
         axios({
             method: "DELETE",
-            url: `/post/${post_id}/comment/${comment.id}`,
+            url: `/post/${post_id}/comment/${comment.id}/${pgInfo.pg}`,
             headers: { Authorization: "Bearer " + token }
         }).then((response) => {
             let rsp = response.data;
             refreshToken(rsp, saveToken);
             setCurrVote(0);
+            pgInfo.setTotalRows(rsp.total_rows);
             isPreview && commentInfo.setComments(rsp.profile_comments);
             !isPreview && commentInfo.setComments(rsp.post_comments);
         }).catch((error) => catchTimeout(error, navigate, removeToken))

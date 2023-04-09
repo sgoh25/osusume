@@ -141,44 +141,46 @@ def get_post(post_id):
         return {"msg", e}
 
 
-@bp.route("/<int:post_id>", methods=["POST", "DELETE"])
+@bp.route("/<int:post_id>", methods=["POST"])
 @jwt_required()
 def update_post(post_id):
     db = get_db()
-    if request.method == "DELETE":
+    title = request.json.get("title", None)
+    description = request.json.get("description", None)
+    tag = request.json.get("tag", None)
+    error = None
+
+    if not title:
+        error = "Title is required."
+
+    if error is None:
         try:
-            db.execute("DELETE from post where id = ?", (post_id,))
+            db.execute(
+                "UPDATE post SET created = ?, title = ?, description = ?, tag = ? WHERE id = ?",
+                (datetime.now(), title, description, tag, post_id),
+            )
             db.commit()
-            profile_dict = get_profile_posts(1)
-            return {
-                "msg": "Post deleted",
-                "profile_posts": profile_dict["posts"],
-                "total_rows": profile_dict["total_rows"],
-            }
         except Exception as e:
-            return {"msg", e}
-    elif request.method == "POST":
-        title = request.json.get("title", None)
-        description = request.json.get("description", None)
-        tag = request.json.get("tag", None)
-        error = None
+            error = e
+        else:
+            return {"msg": "Post updated"}
+    return {"msg": error}
 
-        if not title:
-            error = "Title is required."
-
-        if error is None:
-            try:
-                db.execute(
-                    "UPDATE post SET created = ?, title = ?, description = ?, tag = ? WHERE id = ?",
-                    (datetime.now(), title, description, tag, post_id),
-                )
-                db.commit()
-            except Exception as e:
-                error = e
-            else:
-                return {"msg": "Post updated"}
-        return {"msg": error}
-    return {}
+@bp.route("/<int:post_id>/<int:pg_num>", methods=["DELETE"])
+@jwt_required()
+def delete_post(post_id, pg_num):
+    db = get_db()
+    try:
+        db.execute("DELETE from post where id = ?", (post_id,))
+        db.commit()
+        profile_dict = get_profile_posts(pg_num)
+        return {
+            "msg": "Post deleted",
+            "profile_posts": profile_dict["posts"],
+            "total_rows": profile_dict["total_rows"],
+        }
+    except Exception as e:
+        return {"msg", e}
 
 
 @bp.route("/<int:post_id>/comment", methods=["POST"])
@@ -241,15 +243,15 @@ def get_comments(post_id, pg_num):
     return response
 
 
-@bp.route("/<int:post_id>/comment/<int:comment_id>", methods=["DELETE"])
+@bp.route("/<int:post_id>/comment/<int:comment_id>/<int:pg_num>", methods=["DELETE"])
 @jwt_required()
-def delete_comment(post_id, comment_id):
+def delete_comment(post_id, comment_id, pg_num):
     db = get_db()
     try:
         db.execute("DELETE from comment where id = ?", (comment_id,))
         db.commit()
-        comment_dict = get_comments(post_id, 1)
-        profile_comment_dict = get_profile_comments(1)
+        comment_dict = get_comments(post_id, pg_num)
+        profile_comment_dict = get_profile_comments(pg_num)
         return {
             "msg": "Post deleted",
             "post_comments": comment_dict["comments"],
