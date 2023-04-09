@@ -94,7 +94,7 @@ export default function EditLayout({ post_id, tokenInfo }) {
                     <div className="label">Description:</div>
                     <textarea onChange={handleChange} placeholder="Description" name="description" text={postForm.description} value={postForm.description}></textarea>
                     <div className="label">Tag:</div>
-                    <Select className="tag_create" onSelect={handleSelect} placeholder="Tag" options={getTagList(false)} />
+                    <Select className="tag_create" onSelect={handleSelect} placeholder="Tag" value={postForm.tag ? postForm.tag : null} options={getTagList(false)} />
                     {error != null && <div className="error">{error}</div>}
                     <div className="login_button">
                         <Button className="button" type="primary" onClick={() => handleSubmit(isCreate)}>Submit</Button>
