@@ -95,17 +95,48 @@ body {
     margin-right: 8px;
 }
 
-.tag_title {
+.tag_title1,
+.tag_title2,
+.tag_title3,
+.tag_title4,
+.tag_title5 {
     height: auto;
     padding: 2px 8px;
     font-size: 25px;
     font-weight: bold;
     border-style: solid;
     border-radius: 5px;
+    box-shadow: 1px 1px 1px rgba(195, 191, 191, 0.684);
+}
+
+.tag_title1 {
+    border-color: rgba(221, 148, 148, 0.92);
+    color: rgb(123, 37, 37);
+    background-color: rgba(231, 157, 157, 0.733);
+}
+
+.tag_title2 {
+    border-color: rgba(148, 221, 158, 0.92);
+    color: rgb(37, 123, 67);
+    background-color: rgba(157, 231, 179, 0.733);
+}
+
+.tag_title3 {
     border-color: rgba(148, 183, 221, 0.92);
     color: rgb(37, 79, 123);
     background-color: rgba(157, 193, 231, 0.733);
-    box-shadow: 1px 1px 1px rgba(195, 191, 191, 0.684);
+}
+
+.tag_title4 {
+    border-color: rgba(221, 182, 148, 0.92);
+    color: rgb(123, 90, 37);
+    background-color: rgba(231, 195, 157, 0.733);
+}
+
+.tag_title5 {
+    border-color: rgba(221, 148, 191, 0.92);
+    color: rgb(123, 37, 101);
+    background-color: rgba(231, 157, 224, 0.733);
 }
 
 .create_button {
@@ -123,7 +154,7 @@ body {
 
 .category,
 .tag {
-    width: 140px;
+    width: 160px;
     size: large;
 }
 

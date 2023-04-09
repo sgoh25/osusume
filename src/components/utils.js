@@ -4,15 +4,31 @@ export function getTagList(showHome) {
     if (showHome) {
         return [
             { value: 'Home', label: '<Home>' },
-            { value: 'Food', label: 'Food' },
+            { value: 'Career', label: 'Career' },
             { value: 'Entertainment', label: 'Entertainment' },
+            { value: 'Food', label: 'Food' },
+            { value: 'Home Improvement', label: 'Home Improvement' },
+            { value: 'Relationships', label: 'Relationships' },
         ]
     }
     else {
         return [
-            { value: 'Food', label: 'Food' },
+            { value: 'Career', label: 'Career' },
             { value: 'Entertainment', label: 'Entertainment' },
+            { value: 'Food', label: 'Food' },
+            { value: 'Home Improvement', label: 'Home Improvement' },
+            { value: 'Relationships', label: 'Relationships' },
         ]
+    }
+}
+
+export function getTagMap() {
+    return {
+        'Career': 1,
+        'Entertainment': 2,
+        'Food': 3,
+        'Home Improvement': 4,
+        'Relationships': 5,
     }
 }
 

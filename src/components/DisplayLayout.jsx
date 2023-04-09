@@ -3,7 +3,7 @@ import { Button, Dropdown, Modal, Pagination, Select } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { catchTimeout, getMenuItems, getTagList, handleLogout, refreshToken } from './utils';
+import { catchTimeout, getMenuItems, getTagList, getTagMap, handleLogout, refreshToken } from './utils';
 import '../styles/Home.css';
 import '../styles/Post.css';
 import '../styles/Settings.css';
@@ -235,7 +235,7 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
                             {tag &&
                                 <>
                                     <div className="tag_pretitle">Tag: </div>
-                                    <div className="tag_title">{tag}</div>
+                                    <div className={`tag_title${getTagMap()[tag]}`}>{tag}</div>
                                 </>
                             }
                         </div>

@@ -66,6 +66,57 @@ hr {
     width: 100%;
 }
 
+.preview_bottom {
+    display: flex;
+    justify-content: space-between;
+}
+
+.preview_tag1,
+.preview_tag2,
+.preview_tag3,
+.preview_tag4,
+.preview_tag5 {
+    height: 25px;
+    padding: 2px 8px;
+    margin-top: 15px;
+    margin-left: 25px;
+    font-size: 12px;
+    border-style: solid;
+    border-radius: 5px;
+    box-shadow: 1px 1px 1px rgba(195, 191, 191, 0.684);
+}
+
+.preview_tag1 {
+    border-color: rgba(221, 148, 148, 0.92);
+    color: rgb(123, 37, 37);
+    background-color: rgba(231, 157, 157, 0.733);
+}
+
+.preview_tag2 {
+    border-color: rgba(148, 221, 158, 0.92);
+    color: rgb(37, 123, 67);
+    background-color: rgba(157, 231, 179, 0.733);
+}
+
+.preview_tag3 {
+    border-color: rgba(148, 183, 221, 0.92);
+    color: rgb(37, 79, 123);
+    background-color: rgba(157, 193, 231, 0.733);
+}
+
+.preview_tag4 {
+    border-color: rgba(221, 182, 148, 0.92);
+    color: rgb(123, 90, 37);
+    background-color: rgba(231, 195, 157, 0.733);
+}
+
+.preview_tag5 {
+    border-color: rgba(221, 148, 191, 0.92);
+    color: rgb(123, 37, 101);
+    background-color: rgba(231, 157, 224, 0.733);
+}
+
+
 .comment_preview {
     display: block;
     padding: 20px 0;
@@ -221,7 +272,7 @@ hr {
 
 .tag_create {
     display: flex;
-    width: 140px;
+    width: 160px;
     size: large;
     margin: 5px 10%;
 }

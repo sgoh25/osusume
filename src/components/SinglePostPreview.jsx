@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Button, Modal } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { catchTimeout, refreshToken } from './utils';
+import { catchTimeout, getTagMap, refreshToken } from './utils';
 import '../styles/Post.css';
 
 export default function SinglePostPreview({ postInfo, pgInfo, tokenInfo, isProfile }) {
@@ -35,7 +35,10 @@ export default function SinglePostPreview({ postInfo, pgInfo, tokenInfo, isProfi
             <div className="preview_wrapper">
                 <div className="preview" onClick={() => navigate(`/post/${post.id}`, { replace: true, state: { post_id: post.id, pg_num: 1 } })}>
                     <h2>{post.title}</h2>
-                    <p>By: {post.author} - {post.created && post.created.slice(0, -7)}</p>
+                    <div class="preview_bottom">
+                        <p>By: {post.author} - {post.created && post.created.slice(0, -7)}</p>
+                        {post.tag && <Button className={`preview_tag${getTagMap()[post.tag]}`} onClick={() => navigate(`/tag/${post.tag}`, { replace: true, state: { tag_id: post.tag } })}>{post.tag}</Button>}
+                    </div>
                 </div>
                 {isProfile &&
                     <div className="edit_buttons">
