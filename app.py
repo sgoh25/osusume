@@ -4,9 +4,9 @@ from datetime import timedelta
 from flask import Flask
 from flask_jwt_extended import JWTManager
 
-from . import db
-from . import auth
-from . import post
+from api import db
+from api import auth
+from api import post
 
 
 def create_app():
