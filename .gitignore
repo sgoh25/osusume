@@ -26,5 +26,3 @@ yarn-error.log*
 __pycache__/
 .vscode/
 instance/
-.firebase/
-.github/
