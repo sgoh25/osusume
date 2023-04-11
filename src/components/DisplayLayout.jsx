@@ -181,6 +181,7 @@ export default function DisplayLayout({ state, isProfile, tokenInfo }) {
 
     function handlePgChange(page) {
         setPg(page);
+        window.scrollTo(0, 0);
         !isProfile && tag == null && navigate(`/pg/${page}`, { replace: true, state: { pg_num: page, tag_id: tag } });
         !isProfile && tag != null && navigate(`/tag/${tag}/pg/${page}`, { replace: true, state: { pg_num: page, tag_id: tag } });
         isProfile && navigate(`/profile/pg/${page}`, { replace: true, state: { pg_num: page, tag_id: tag } });

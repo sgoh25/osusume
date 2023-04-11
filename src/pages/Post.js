@@ -78,6 +78,7 @@ export default function Post({ token, saveToken, removeToken }) {
 
     function handlePgChange(page) {
         setPg(page);
+        window.scrollTo(0, 0);
         navigate(`/post/${post_id}/pg/${page}`, { replace: true, state: { post_id: post_id, pg_num: page } });
     }
 
