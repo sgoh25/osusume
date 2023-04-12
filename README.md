@@ -8,4 +8,4 @@ a leap and try something new with the reassurance of community endorsement!
 
 ## Demo
 
-[<img src="/public/thumbnail.png" width="50%">](https://youtu.be/TWagI6jTSl4 "Osusume Demo")
+[<img src="/public/thumbnail.png" width="50%">](https://youtu.be/oR46j1pO99M "Osusume Demo")
